@@ -138,7 +138,9 @@ class Sketch(CanvasBase):
                 print("draw a line from ", self.points_l[-1], " -> ", self.points_l[-2])
             # TODO 0: uncomment this and comment out drawPoint when you finished the drawLine function 
             # self.drawLine(self.buff, self.points_l[-2], self.points_l[-1], self.doSmooth, self.doAA, self.doAAlevel)
-            self.drawPoint(self.buff, self.points_l[-1]) 
+            # self.drawPoint(self.buff, self.points_l[-1]) 
+            # drawRectangle for lab 1, comment it out and use drawLine when done with drawLine func
+            self.drawRectangle(self.buff, self.points_l[-2], self.points_l[-1])
             self.points_l.clear()
 
     # Deal with Mouse Right Button Pressed Interruption
@@ -304,7 +306,13 @@ class Sketch(CanvasBase):
         #   3. You should be able to support both flat shading and smooth shading, which is controlled by doSmooth
         #   4. For texture-mapped fill of triangles, it should be controlled by doTexture flag.
         return
-
+    # drawRectangle for lab 1
+    def drawRectangle(self, buff, p1, p2, doSmooth=True, doAA=False, doAAlevel=4):
+        x1, y1 = p1.coords
+        x2, y2 = p2.coords
+        for x in range(min(x1, x2), max(x1, x2)+1):
+            for y in range(min(y1, y2), max(y1, y2)+1):
+                self.drawPoint(buff, Point((x,y), p1.color))
     # test for lines lines in all directions
     def testCaseLine01(self, n_steps):
         center_x = int(self.buff.width / 2)
