@@ -137,10 +137,10 @@ class Sketch(CanvasBase):
             if self.debug > 0:
                 print("draw a line from ", self.points_l[-1], " -> ", self.points_l[-2])
             # TODO 0: uncomment this and comment out drawPoint when you finished the drawLine function 
-            # self.drawLine(self.buff, self.points_l[-2], self.points_l[-1], self.doSmooth, self.doAA, self.doAAlevel)
+            self.drawLine(self.buff, self.points_l[-2], self.points_l[-1], self.doSmooth, self.doAA, self.doAAlevel)
             # self.drawPoint(self.buff, self.points_l[-1]) 
             # drawRectangle for lab 1, comment it out and use drawLine when done with drawLine func
-            self.drawRectangle(self.buff, self.points_l[-2], self.points_l[-1])
+            # self.drawRectangle(self.buff, self.points_l[-2], self.points_l[-1])
             self.points_l.clear()
 
     # Deal with Mouse Right Button Pressed Interruption
@@ -273,7 +273,41 @@ class Sketch(CanvasBase):
         # Requirements:
         #   1. Only integer is allowed in interpolate point coordinates between p1 and p2
         #   2. Float number is allowed in interpolate point color
-        return
+
+        # Calculate differences and steps
+        x1, y1 = p1.coords
+        x2, y2 = p2.coords
+        dx = abs(x2 - x1)
+        dy = abs(y2 - y1)
+        sx = 1 if x1 < x2 else -1
+        sy = 1 if y1 < y2 else -1
+        err = dx - dy
+
+
+        def interpolate_color(t):
+            return p1.color * (1 - t) + p2.color * t
+
+        steps = max(dx, dy)  # Number of steps along the line
+        for i in range(steps + 1):
+            t = i / steps  # Interpolation factor for color
+            color = interpolate_color(t) if doSmooth else p1.color
+            
+            # Plot the point
+            self.drawPoint(buff, Point((x1,y1), color))
+            # Bresenham's line drawing
+            e2 = 2 * err
+            if e2 > -dy:
+                err -= dy
+                x1 += sx
+            if e2 < dx:
+                err += dx
+                y1 += sy
+
+        # If anti-aliasing is enabled, apply supersampling
+        if doAA:
+            aa_factor = doAAlevel
+            for i in range(1, aa_factor):
+                self.apply_anti_aliasing(buff, p1, p2, i / aa_factor)
 
     def drawTriangle(self, buff, p1, p2, p3, doSmooth=True, doAA=False, doAAlevel=4, doTexture=False):
         """
