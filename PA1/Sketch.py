@@ -274,41 +274,75 @@ class Sketch(CanvasBase):
         #   1. Only integer is allowed in interpolate point coordinates between p1 and p2
         #   2. Float number is allowed in interpolate point color
 
-        # Calculate differences and steps
         x1, y1 = p1.coords
         x2, y2 = p2.coords
+        # difference in x and y values, aka slope
         dx = abs(x2 - x1)
         dy = abs(y2 - y1)
-        sx = 1 if x1 < x2 else -1
-        sy = 1 if y1 < y2 else -1
-        err = dx - dy
-
-
-        def interpolate_color(t):
-            return p1.color * (1 - t) + p2.color * t
-
-        steps = max(dx, dy)  # Number of steps along the line
+        # for determing the direction of the line
+        sx, sy = 0, 0
+        # positive means go x1 is "behind" x2, negative is the opposite
+        if x1 < x2:
+            sx = 1
+        else:
+            sx = -1
+        # positive means y1 lower, negative means y2 lower
+        if y1 < y2:
+            sy = 1
+        else:
+            sy= -1
+        prev_p = 0
+        if dx > dy:
+            prev_p = (2*dy) - (dx)
+        if dy > dx:
+            prev_p = (2*dx) - (dy)
+        #base case for decision parameter
+        # inc factor essentially checks if x or y value should be changed based on the decision paramter
+        # which one to change(x or y) depends on the slope
+        # 0 means no change(keep yk), 1 means change(keep y(k+1))
+        inc_factor = 0
+        if prev_p > 0:
+            inc_factor = 1
+        steps = max(dx, dy) 
+        print("steps ", steps)
+        #print(p1.color.r, p2.color.r)
         for i in range(steps + 1):
-            t = i / steps  # Interpolation factor for color
-            color = interpolate_color(t) if doSmooth else p1.color
+            t = i / steps  
+            color = p1.color
+            #smoothing out/interpolating will gradually transform the line from first dot color to second dot color
+            # based on how far along are we in the making of the line
+            if doSmooth:
+                color_r = p1.color.r * (1 - t) + p2.color.r * t
+                color_g = p1.color.g * (1 - t) + p2.color.g * t
+                color_b = p1.color.b * (1 - t) + p2.color.b * t
+                color = ColorType(color_r, color_g, color_b)
             
-            # Plot the point
+            # a line is just a lot of points so drawPoint works fine
+            print(x1, y1)
             self.drawPoint(buff, Point((x1,y1), color))
-            # Bresenham's line drawing
-            e2 = 2 * err
-            if e2 > -dy:
-                err -= dy
+            # Bresenham's Algorithm
+            if dx > dy: # abs(m) or abs(dy/dx) would be less than one, meaning each column contains a pixel
+            # y coord always changes by 1, x coord will depend on decision parameter
                 x1 += sx
-            if e2 < dx:
-                err += dx
+                curr_p = prev_p + (2*dy) - (2*dx*(inc_factor))
+                if prev_p < 0:
+                    inc_factor = 0
+                else:
+                    inc_factor = 1
+                    y1 += sy
+                prev_p = curr_p
+            elif dx == dy: # slope is 1, which means x and y both change by 1 for every new pixel
+                x1 += sx
                 y1 += sy
-
-        # If anti-aliasing is enabled, apply supersampling
-        if doAA:
-            aa_factor = doAAlevel
-            for i in range(1, aa_factor):
-                self.apply_anti_aliasing(buff, p1, p2, i / aa_factor)
-
+            else: # slope is > 1, which means each row would contain a pixel
+                y1 += sy
+                curr_p = prev_p + (2*dx) - (2*dy*(inc_factor))
+                if prev_p < 0:
+                    inc_factor = 0
+                else:
+                    inc_factor = 1
+                    x1 += sx
+                prev_p = curr_p
     def drawTriangle(self, buff, p1, p2, p3, doSmooth=True, doAA=False, doAAlevel=4, doTexture=False):
         """
         draw Triangle to buff. apply smooth color filling if doSmooth set to true, otherwise fill with first point color
