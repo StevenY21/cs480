@@ -382,7 +382,7 @@ class Sketch(CanvasBase):
         self.drawLine(buff, p2, p3, doSmooth, doAA, doAAlevel)
         default_color = p1.color
         # modified drawLine that will store all the points of the outline
-        points_dict = {p1.coords[1]:{p1.coords[0]: p1.color}}
+        points_dict = {}
         #print(points_dict)
         def getPoints(v1, v2, doSmooth, doAA, doAAlevel):
             x1, y1 = v1.coords
@@ -429,17 +429,10 @@ class Sketch(CanvasBase):
                     color = ColorType(color_r, color_g, color_b)
                 # adding points to the dict
                 if points_dict.get(y1) is None: #no points at the y value just yet
-                    points_dict[y1] = {x1: color}
+                    points_dict[y1] = [(x1, color)]
+                    # points_dict[y1] = {x1: color}
                 else:
-                    points_dict[y1][x1] = color
-                if len(points_dict[y1]) == 2:
-                    points = ["", ""]
-                    i = 0
-                    for x in points_dict[y1]:
-                        points[i] = Point((x, y1), points_dict[y1][x])
-                        i += 1
-                    # print("points", points)
-                    self.drawLine(buff, points[0], points[1], doSmooth, doAA, doAAlevel)
+                    points_dict[y1] += [(x1, color)]
                 # Bresenham's Algorithm
                 if dx > dy: # abs(m) or abs(dy/dx) would be less than one, meaning each column contains a pixel
                 # y coord always changes by 1, x coord will depend on decision parameter
@@ -467,10 +460,20 @@ class Sketch(CanvasBase):
                         inc_factor = 1
                         x1 += sx
                     prev_p = curr_p
+            #print(points_dict)
         getPoints(p1, p2, doSmooth, doAA, doAAlevel)
         getPoints(p1, p3, doSmooth, doAA, doAAlevel)
         getPoints(p2, p3, doSmooth, doAA, doAAlevel)
-        #print(points_dict)
+        # process all points and draw out the lines
+        for y in points_dict:
+            if len(points_dict[y]) >= 2:
+                sorted_points = sorted(points_dict[y], key=lambda x: x[0])
+                #print(y, sorted_points)
+                min_point = Point((sorted_points[0][0], y), sorted_points[0][1])
+                max_point = Point((sorted_points[-1][0], y), sorted_points[-1][1])
+                if min_point.coords != max_point.coords:
+                    #print(min_point, max_point)
+                    self.drawLine(buff, min_point, max_point, doSmooth, doAA, doAAlevel)
         # sorts all points based on y level, from lowest to highest
         sorted_points = sorted([p1, p2, p3], key=lambda p: p.coords[1])
         point1, point2, point3 = sorted_points[0], sorted_points[1], sorted_points[2]
