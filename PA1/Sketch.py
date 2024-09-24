@@ -8,6 +8,7 @@ First version Created on 09/28/2018
 
 Submitted version modifed drawLine and drawTriangle
 author: Steven Yao (styao@bu.edu)
+id: U38800489
 """
 
 import os

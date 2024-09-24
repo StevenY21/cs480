@@ -6,3 +6,4 @@ Summary: For drawLine, I used Bresenham's algorithm to get the points on the lin
 For drawTriangle, I essentially modified the drawLine function to get all the points on the outline of the triangle and store them in 
 a dictionary, which would then be processed with drawLine() row by row/ y-level by y-level, filling out the whole triangle. For smoothing out colors,
 interlopation was used for both, basing the color of the pixel on a line on how far it is from the original point.
+Sources consulted: Lecture and lab slides/notes
