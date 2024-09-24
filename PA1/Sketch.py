@@ -6,6 +6,8 @@ First version Created on 09/28/2018
 :author: micou(Zezhou Sun)
 :version: 2021.2.1
 
+Submitted version modifed drawLine and drawTriangle
+author: Steven Yao (styao@bu.edu)
 """
 
 import os
@@ -276,13 +278,14 @@ class Sketch(CanvasBase):
 
         x1, y1 = p1.coords
         x2, y2 = p2.coords
+        
         # difference in x and y values, aka slope
         dx = abs(x2 - x1)
         dy = abs(y2 - y1)
         # for determing the direction of the line
         sx, sy = 0, 0
         # positive means go x1 is "behind" x2, negative is the opposite
-        if x1 < x2:
+        if x1 < x2: 
             sx = 1
         else:
             sx = -1
@@ -294,7 +297,7 @@ class Sketch(CanvasBase):
         prev_p = 0
         if dx > dy:
             prev_p = (2*dy) - (dx)
-        if dy > dx:
+        else:
             prev_p = (2*dx) - (dy)
         #base case for decision parameter
         # inc factor essentially checks if x or y value should be changed based on the decision paramter
@@ -306,46 +309,50 @@ class Sketch(CanvasBase):
         steps = max(dx, dy) 
         #print("steps ", steps)
         #print(p1.color.r, p2.color.r)
-        for i in range(steps + 1):
-            t = i / steps  
-            color = p1.color
-            #smoothing out/interpolating will gradually transform the line from first dot color to second dot color
-            # based on how far along are we in the making of the line
-            if doSmooth:
-                color_r = p1.color.r * (1 - t) + p2.color.r * t
-                color_g = p1.color.g * (1 - t) + p2.color.g * t
-                color_b = p1.color.b * (1 - t) + p2.color.b * t
-                color = ColorType(color_r, color_g, color_b)
-            # a line is just a lot of points so drawPoint works fine
-            #print(x1, y1)
-            self.drawPoint(buff, Point((x1,y1), color))
-            # Bresenham's Algorithm
-            if dx == dy: # slope is 1, which means x and y both change by 1 for every new pixel
-                x1 += sx
-                y1 += sy
-            elif dx == 0: # vertical line
-                y1 += sy
-            elif dy == 0: # horizontal line
-                x1 += sx
-            elif dx > dy: # abs(m) or abs(dy/dx) would be less than one, meaning each column contains a pixel
-            # y coord always changes by 1, x coord will depend on decision parameter
-                x1 += sx
-                curr_p = prev_p + (2*dy) - (2*dx*(inc_factor))
-                if curr_p < 0:
-                    inc_factor = 0
-                else:
-                    inc_factor = 1
-                    y1 += sy
-                prev_p = curr_p
-            else: # dx slope is > 1, which means each row would contain a pixel
-                y1 += sy
-                curr_p = prev_p + (2*dx) - (2*dy*(inc_factor))
-                if curr_p < 0:
-                    inc_factor = 0
-                else:
-                    inc_factor = 1
+        # checking if double clicked same point
+        if p1 == p2:
+            self.drawPoint(buff, p1)
+        else:
+            for i in range(steps + 1):
+                t = i / steps  
+                color = p1.color
+                #smoothing out/interpolating will gradually transform the line from first dot color to second dot color
+                # based on how far along are we in the making of the line
+                if doSmooth:
+                    color_r = p1.color.r * (1 - t) + p2.color.r * t
+                    color_g = p1.color.g * (1 - t) + p2.color.g * t
+                    color_b = p1.color.b * (1 - t) + p2.color.b * t
+                    color = ColorType(color_r, color_g, color_b)
+                # a line is just a lot of points so drawPoint works fine
+                #print(x1, y1)
+                self.drawPoint(buff, Point((x1,y1), color))
+                # Bresenham's Algorithm
+                if dx == dy: # slope is 1, which means x and y both change by 1 for every new pixel
                     x1 += sx
-                prev_p = curr_p
+                    y1 += sy
+                elif dx == 0: # vertical line
+                    y1 += sy
+                elif dy == 0: # horizontal line
+                    x1 += sx
+                elif dx > dy: # abs(m) or abs(dy/dx) would be less than one, meaning each column contains a pixel
+                # y coord always changes by 1, x coord will depend on decision parameter
+                    x1 += sx
+                    curr_p = prev_p + (2*dy) - (2*dx*(inc_factor))
+                    if curr_p < 0:
+                        inc_factor = 0
+                    else:
+                        inc_factor = 1
+                        y1 += sy
+                    prev_p = curr_p
+                else: # dx slope is > 1, which means each row would contain a pixel
+                    y1 += sy
+                    curr_p = prev_p + (2*dx) - (2*dy*(inc_factor))
+                    if curr_p < 0:
+                        inc_factor = 0
+                    else:
+                        inc_factor = 1
+                        x1 += sx
+                    prev_p = curr_p
     def drawTriangle(self, buff, p1, p2, p3, doSmooth=True, doAA=False, doAAlevel=4, doTexture=False):
         """
         draw Triangle to buff. apply smooth color filling if doSmooth set to true, otherwise fill with first point color
@@ -380,13 +387,12 @@ class Sketch(CanvasBase):
         # draws out the outline of the triangle
         self.drawLine(buff, p1, p3, doSmooth, doAA, doAAlevel)
         self.drawLine(buff, p2, p3, doSmooth, doAA, doAAlevel)
-        default_color = p1.color
-        # modified drawLine that will store all the points of the outline
+        default_color = p1.color # when random color not needed
+        # for storing all the points on the outline of the triangle
         points_dict = {}
-        #print(points_dict)
-        #print("p1", p1.coords)
-        #print("p2", p2.coords)
-        #print("p3", p3.coords)
+
+        # repeat of drawLine(), but modified to get the points of the outine instead of drawing them out again
+        # essentially 1st part of bilinear interpolation
         def getPoints(v1, v2, doSmooth, doAA, doAAlevel):
             x1, y1 = v1.coords
             x2, y2 = v2.coords
@@ -463,34 +469,20 @@ class Sketch(CanvasBase):
                         inc_factor = 1
                         x1 += sx
                     prev_p = curr_p
-            #print(points_dict)
+        # gathering all the points of the outline of the triangle
         getPoints(p1, p2, doSmooth, doAA, doAAlevel)
         getPoints(p1, p3, doSmooth, doAA, doAAlevel)
         getPoints(p2, p3, doSmooth, doAA, doAAlevel)
-        # process all points and draw out the lines
+        # process all points and fill out the triangle row by row
+        # part 2 of bilinear interpolation
         for y in points_dict:
             if len(points_dict[y]) >= 2:
+                # takes only the furthest points on the row, to ensure whole row filled
                 sorted_points = sorted(points_dict[y], key=lambda x: x[0])
-                #print(y, sorted_points)
                 min_point = Point((sorted_points[0][0], y), sorted_points[0][1])
                 max_point = Point((sorted_points[-1][0], y), sorted_points[-1][1])
-                if min_point.coords != max_point.coords:
-                    #print(min_point, max_point)
+                if min_point.coords != max_point.coords: # occasional duplicates can pop up
                     self.drawLine(buff, min_point, max_point, doSmooth, doAA, doAAlevel)
-        """
-        # sorts all points based on y level, from lowest to highest
-        sorted_points = sorted([p1, p2, p3], key=lambda p: p.coords[1])
-        point1, point2, point3 = sorted_points[0], sorted_points[1], sorted_points[2]
-        x1, y1 = point1.coords
-        x2, y2 = point2.coords
-        x3, y3 = point3.coords
-        if point1.coords[1] == point2.coords[1]: # flat edge on bottom of triangle
-            dy=1
-        elif point2.coords[1] == point3.coords[1]: # flat edge on top of triange
-            dy= 1
-        else: # no flat edge, create one with middle point across the triangle
-            dy=2
-        """
     # drawRectangle for lab 1
     def drawRectangle(self, buff, p1, p2, doSmooth=True, doAA=False, doAAlevel=4):
         x1, y1 = p1.coords
