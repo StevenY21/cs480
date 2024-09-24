@@ -320,7 +320,14 @@ class Sketch(CanvasBase):
             #print(x1, y1)
             self.drawPoint(buff, Point((x1,y1), color))
             # Bresenham's Algorithm
-            if dx > dy: # abs(m) or abs(dy/dx) would be less than one, meaning each column contains a pixel
+            if dx == dy: # slope is 1, which means x and y both change by 1 for every new pixel
+                x1 += sx
+                y1 += sy
+            elif dx == 0: # vertical line
+                y1 += sy
+            elif dy == 0: # horizontal line
+                x1 += sx
+            elif dx > dy: # abs(m) or abs(dy/dx) would be less than one, meaning each column contains a pixel
             # y coord always changes by 1, x coord will depend on decision parameter
                 x1 += sx
                 curr_p = prev_p + (2*dy) - (2*dx*(inc_factor))
@@ -330,14 +337,7 @@ class Sketch(CanvasBase):
                     inc_factor = 1
                     y1 += sy
                 prev_p = curr_p
-            elif dx == dy: # slope is 1, which means x and y both change by 1 for every new pixel
-                x1 += sx
-                y1 += sy
-            elif dx == 0: # vertical line
-                y1 += sy
-            elif dy == 0: # horizontal line
-                x1 += sx
-            else: # slope is > 1, which means each row would contain a pixel
+            else: # dx slope is > 1, which means each row would contain a pixel
                 y1 += sy
                 curr_p = prev_p + (2*dx) - (2*dy*(inc_factor))
                 if curr_p < 0:
@@ -437,7 +437,14 @@ class Sketch(CanvasBase):
                 else:
                     points_dict[y1] += [(x1, color)]
                 # Bresenham's Algorithm
-                if dx > dy: # abs(m) or abs(dy/dx) would be less than one, meaning each column contains a pixel
+                if dx == dy: # slope is 1, which means x and y both change by 1 for every new pixel
+                    x1 += sx
+                    y1 += sy
+                elif dx == 0: # vertical line
+                    y1 += sy
+                elif dy == 0: # horizontal line
+                    x1 += sx
+                elif dx > dy: # abs(m) or abs(dy/dx) would be less than one, meaning each column contains a pixel
                 # y coord always changes by 1, x coord will depend on decision parameter
                     x1 += sx
                     curr_p = prev_p + (2*dy) - (2*dx*(inc_factor))
@@ -447,13 +454,6 @@ class Sketch(CanvasBase):
                         inc_factor = 1
                         y1 += sy
                     prev_p = curr_p
-                elif dx == dy: # slope is 1, which means x and y both change by 1 for every new pixel
-                    x1 += sx
-                    y1 += sy
-                elif dx == 0: # vertical line
-                    y1 += sy
-                elif dy == 0: # horizontal line
-                    x1 += sx
                 else: # slope is > 1, which means each row would contain a pixel
                     y1 += sy
                     curr_p = prev_p + (2*dx) - (2*dy*(inc_factor))
