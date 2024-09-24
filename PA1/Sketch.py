@@ -419,7 +419,7 @@ class Sketch(CanvasBase):
             #print(p1.color.r, p2.color.r)
             for i in range(steps + 1):
                 t = i / steps  
-                color = v1.color
+                color = default_color
                 #smoothing out/interpolating will gradually transform the line from first dot color to second dot color
                 # based on how far along are we in the making of the line
                 if doSmooth:
