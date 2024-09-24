@@ -324,7 +324,7 @@ class Sketch(CanvasBase):
             # y coord always changes by 1, x coord will depend on decision parameter
                 x1 += sx
                 curr_p = prev_p + (2*dy) - (2*dx*(inc_factor))
-                if prev_p < 0:
+                if curr_p < 0:
                     inc_factor = 0
                 else:
                     inc_factor = 1
@@ -340,7 +340,7 @@ class Sketch(CanvasBase):
             else: # slope is > 1, which means each row would contain a pixel
                 y1 += sy
                 curr_p = prev_p + (2*dx) - (2*dy*(inc_factor))
-                if prev_p < 0:
+                if curr_p < 0:
                     inc_factor = 0
                 else:
                     inc_factor = 1
@@ -384,6 +384,9 @@ class Sketch(CanvasBase):
         # modified drawLine that will store all the points of the outline
         points_dict = {}
         #print(points_dict)
+        #print("p1", p1.coords)
+        #print("p2", p2.coords)
+        #print("p3", p3.coords)
         def getPoints(v1, v2, doSmooth, doAA, doAAlevel):
             x1, y1 = v1.coords
             x2, y2 = v2.coords
@@ -410,7 +413,7 @@ class Sketch(CanvasBase):
             #base case for decision parameter
             # inc factor essentially checks if x or y value should be changed based on the decision paramter
             # which one to change(x or y) depends on the slope
-            # 0 means no change(keep yk), 1 means change(keep y(k+1))
+            # 0 means no change(keep yk), 1 means change(use y(k)+1)
             inc_factor = 0
             if prev_p > 0:
                 inc_factor = 1
@@ -438,7 +441,7 @@ class Sketch(CanvasBase):
                 # y coord always changes by 1, x coord will depend on decision parameter
                     x1 += sx
                     curr_p = prev_p + (2*dy) - (2*dx*(inc_factor))
-                    if prev_p < 0:
+                    if curr_p < 0:
                         inc_factor = 0
                     else:
                         inc_factor = 1
@@ -454,7 +457,7 @@ class Sketch(CanvasBase):
                 else: # slope is > 1, which means each row would contain a pixel
                     y1 += sy
                     curr_p = prev_p + (2*dx) - (2*dy*(inc_factor))
-                    if prev_p < 0:
+                    if curr_p < 0:
                         inc_factor = 0
                     else:
                         inc_factor = 1
@@ -474,6 +477,7 @@ class Sketch(CanvasBase):
                 if min_point.coords != max_point.coords:
                     #print(min_point, max_point)
                     self.drawLine(buff, min_point, max_point, doSmooth, doAA, doAAlevel)
+        """
         # sorts all points based on y level, from lowest to highest
         sorted_points = sorted([p1, p2, p3], key=lambda p: p.coords[1])
         point1, point2, point3 = sorted_points[0], sorted_points[1], sorted_points[2]
@@ -486,6 +490,7 @@ class Sketch(CanvasBase):
             dy= 1
         else: # no flat edge, create one with middle point across the triangle
             dy=2
+        """
     # drawRectangle for lab 1
     def drawRectangle(self, buff, p1, p2, doSmooth=True, doAA=False, doAAlevel=4):
         x1, y1 = p1.coords
