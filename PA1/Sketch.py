@@ -154,13 +154,13 @@ class Sketch(CanvasBase):
             if self.debug > 0:
                 print("draw a line from ", self.points_r[-1], " -> ", self.points_r[-2])
             # TODO 0: uncomment this and comment out drawPoint when you finished the drawLine function 
-            # self.drawLine(self.buff, self.points_l[-2], self.points_l[-1], self.doSmooth, self.doAA, self.doAAlevel)
-            self.drawPoint(self.buff, self.points_r[-1])
+            self.drawLine(self.buff, self.points_r[-2], self.points_r[-1], self.doSmooth, self.doAA, self.doAAlevel)
+            #self.drawPoint(self.buff, self.points_r[-1])
         elif len(self.points_r) % 3 == 0 and len(self.points_r) > 0:
             if self.debug > 0:
                 print("draw a triangle {} -> {} -> {}".format(self.points_r[-3], self.points_r[-2], self.points_r[-1]))
             # TODO 0: uncomment drawTriangle and comment out drawPoint when you finished the drawTriangle function 
-            # self.drawTriangle(self.buff, self.points_l[-3], self.points_l[-2], self.points_l[-1], self.doSmooth, self.doAA, self.doAAlevel, self.doTexture)
+            # self.drawTriangle(self.buff, self.points_r[-3], self.points_r[-2], self.points_r[-1], self.doSmooth, self.doAA, self.doAAlevel, self.doTexture)
             self.drawPoint(self.buff, self.points_r[-1])
             self.points_r.clear()
 
@@ -373,7 +373,15 @@ class Sketch(CanvasBase):
         #   2. Polygon scan fill algorithm and the use of barycentric coordinate are not allowed in this function
         #   3. You should be able to support both flat shading and smooth shading, which is controlled by doSmooth
         #   4. For texture-mapped fill of triangles, it should be controlled by doTexture flag.
-        return
+        print("p1", p1)
+        print("p2", p2)
+        print("p3", p3)
+        x1, y1 = p1.coords
+        x2, y2 = p2.coords
+        x3, y3 = p3.coords
+        self.drawLine(buff, p1, p2, doSmooth, doAA, doAAlevel)
+        self.drawLine(buff, p1, p3, doSmooth, doAA, doAAlevel)
+        self.drawLine(buff, p2, p3, doSmooth, doAA, doAAlevel)
     # drawRectangle for lab 1
     def drawRectangle(self, buff, p1, p2, doSmooth=True, doAA=False, doAAlevel=4):
         x1, y1 = p1.coords
