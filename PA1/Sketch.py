@@ -304,7 +304,7 @@ class Sketch(CanvasBase):
         if prev_p > 0:
             inc_factor = 1
         steps = max(dx, dy) 
-        print("steps ", steps)
+        #print("steps ", steps)
         #print(p1.color.r, p2.color.r)
         for i in range(steps + 1):
             t = i / steps  
@@ -317,7 +317,7 @@ class Sketch(CanvasBase):
                 color_b = p1.color.b * (1 - t) + p2.color.b * t
                 color = ColorType(color_r, color_g, color_b)
             # a line is just a lot of points so drawPoint works fine
-            print(x1, y1)
+            #print(x1, y1)
             self.drawPoint(buff, Point((x1,y1), color))
             # Bresenham's Algorithm
             if dx > dy: # abs(m) or abs(dy/dx) would be less than one, meaning each column contains a pixel
@@ -381,10 +381,12 @@ class Sketch(CanvasBase):
         self.drawLine(buff, p1, p3, doSmooth, doAA, doAAlevel)
         self.drawLine(buff, p2, p3, doSmooth, doAA, doAAlevel)
         default_color = p1.color
-        # modified drawLine that will interploate
-        def interpolate(buff, p1, p2, doSmooth, doAA, doAAlevel):
-            x1, y1 = p1.coords
-            x2, y2 = p2.coords
+        # modified drawLine that will store all the points of the outline
+        points_dict = {p1.coords[1]:{p1.coords[0]: p1.color}}
+        #print(points_dict)
+        def getPoints(v1, v2, doSmooth, doAA, doAAlevel):
+            x1, y1 = v1.coords
+            x2, y2 = v2.coords
             # difference in x and y values, aka slope
             dx = abs(x2 - x1)
             dy = abs(y2 - y1)
@@ -413,21 +415,31 @@ class Sketch(CanvasBase):
             if prev_p > 0:
                 inc_factor = 1
             steps = max(dx, dy) 
-            print("steps ", steps)
+            # print("steps ", steps)
             #print(p1.color.r, p2.color.r)
             for i in range(steps + 1):
                 t = i / steps  
-                color = p1.color
+                color = v1.color
                 #smoothing out/interpolating will gradually transform the line from first dot color to second dot color
                 # based on how far along are we in the making of the line
                 if doSmooth:
-                    color_r = p1.color.r * (1 - t) + p2.color.r * t
-                    color_g = p1.color.g * (1 - t) + p2.color.g * t
-                    color_b = p1.color.b * (1 - t) + p2.color.b * t
+                    color_r = v1.color.r * (1 - t) + v2.color.r * t
+                    color_g = v1.color.g * (1 - t) + v2.color.g * t
+                    color_b = v1.color.b * (1 - t) + v2.color.b * t
                     color = ColorType(color_r, color_g, color_b)
-                # a line is just a lot of points so drawPoint works fine
-                print(x1, y1)
-                self.drawPoint(buff, Point((x1,y1), color))
+                # adding points to the dict
+                if points_dict.get(y1) is None: #no points at the y value just yet
+                    points_dict[y1] = {x1: color}
+                else:
+                    points_dict[y1][x1] = color
+                if len(points_dict[y1]) == 2:
+                    points = ["", ""]
+                    i = 0
+                    for x in points_dict[y1]:
+                        points[i] = Point((x, y1), points_dict[y1][x])
+                        i += 1
+                    # print("points", points)
+                    self.drawLine(buff, points[0], points[1], doSmooth, doAA, doAAlevel)
                 # Bresenham's Algorithm
                 if dx > dy: # abs(m) or abs(dy/dx) would be less than one, meaning each column contains a pixel
                 # y coord always changes by 1, x coord will depend on decision parameter
@@ -455,9 +467,12 @@ class Sketch(CanvasBase):
                         inc_factor = 1
                         x1 += sx
                     prev_p = curr_p
+        getPoints(p1, p2, doSmooth, doAA, doAAlevel)
+        getPoints(p1, p3, doSmooth, doAA, doAAlevel)
+        getPoints(p2, p3, doSmooth, doAA, doAAlevel)
+        #print(points_dict)
         # sorts all points based on y level, from lowest to highest
         sorted_points = sorted([p1, p2, p3], key=lambda p: p.coords[1])
-        print(sorted_points)
         point1, point2, point3 = sorted_points[0], sorted_points[1], sorted_points[2]
         x1, y1 = point1.coords
         x2, y2 = point2.coords
