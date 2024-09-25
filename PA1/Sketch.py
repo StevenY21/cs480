@@ -308,7 +308,7 @@ class Sketch(CanvasBase):
                 prev_p = (dy) - (2*dx)
             else:
                 prev_p = (2*dx) - (dy)
-        print(sx, sy, p1.coords, p2.coords)
+        #print(sx, sy, p1.coords, p2.coords)
         #base case for decision parameter
         # inc factor essentially checks if x or y value should be changed based on the decision paramter
         # which one to change(x or y) depends on the slope
@@ -349,12 +349,13 @@ class Sketch(CanvasBase):
                 elif dy == 0: # horizontal line
                     x1 += sx
                 elif dx > dy: # abs(m) or abs(dy/dx) would be less than one, meaning each column contains a pixel
-                # y coord always changes by 1, x coord will depend on decision parameter
+                # x coord always changes by 1, y coord will depend on decision parameter
                     x1 += sx
                     curr_p = prev_p
                     if sy == -1:
+                        # negative slope has the inequality reversed as the whole thing is multipled by -1
                         curr_p = curr_p - (2*dy) + (2*dx*(inc_factor))
-                        if curr_p > 0:
+                        if curr_p > 0: # greater than 0 would mean we stay, less means we go
                             inc_factor = 0
                         else:
                             inc_factor = 1
