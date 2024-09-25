@@ -369,6 +369,7 @@ class Sketch(CanvasBase):
                             y1 += sy
                     prev_p = curr_p
                 else: # dx slope is > 1, which means each row would contain a pixel
+                    #y coord will always change, x is based on decision
                     y1 += sy
                     curr_p = prev_p
                     if sy == -1:
@@ -497,7 +498,7 @@ class Sketch(CanvasBase):
                 elif dy == 0: # horizontal line
                     x1 += sx
                 elif dx > dy: # abs(m) or abs(dy/dx) would be less than one, meaning each column contains a pixel
-                # y coord always changes by 1, x coord will depend on decision parameter
+                # x coord always changes by 1, y coord will depend on decision parameter
                     x1 += sx
                     curr_p = prev_p
                     if sy == -1:
@@ -516,6 +517,7 @@ class Sketch(CanvasBase):
                             y1 += sy
                     prev_p = curr_p
                 else: # dx slope is > 1, which means each row would contain a pixel
+                    #y coord will always change, x is based on decision
                     y1 += sy
                     curr_p = prev_p
                     if sy == -1:
