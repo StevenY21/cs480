@@ -288,28 +288,41 @@ class Sketch(CanvasBase):
         # positive means go x1 is "behind" x2, negative is the opposite
         if x1 < x2: 
             sx = 1
-        else:
+        if x1 > x2:
             sx = -1
         # positive means y1 lower, negative means y2 lower
         if y1 < y2:
             sy = 1
-        else:
+        if y1 > y2:
             sy= -1
         prev_p = 0
-        if dx > dy:
-            prev_p = (2*dy) - (dx)
+        # negative slope has a slightly different decision parameter
+        if dx > dy: # base case/p0 for decision parameter
+            # negative slope has a slightly different decision parameter
+            if sy==-1:
+                prev_p = (dx) - (2*dy)
+            else:
+                prev_p = (2*dy) - (dx)
         else:
-            prev_p = (2*dx) - (dy)
+            if sy==-1:
+                prev_p = (dy) - (2*dx)
+            else:
+                prev_p = (2*dx) - (dy)
+        print(sx, sy, p1.coords, p2.coords)
         #base case for decision parameter
         # inc factor essentially checks if x or y value should be changed based on the decision paramter
         # which one to change(x or y) depends on the slope
-        # 0 means no change(keep yk), 1 means change(keep y(k+1))
+        # 0 means no change(keep yk), 1 means change( y(k+1))
         inc_factor = 0
-        if prev_p > 0:
-            inc_factor = 1
+        if sy == -1:
+            if prev_p > 0:
+                inc_factor = 0
+            else:
+                inc_factor = 1
+        else:
+            if prev_p > 0:
+                inc_factor = 1
         steps = max(dx, dy) 
-        #print("steps ", steps)
-        #print(p1.color.r, p2.color.r)
         # checking if double clicked same point
         if p1 == p2:
             self.drawPoint(buff, p1)
@@ -338,21 +351,39 @@ class Sketch(CanvasBase):
                 elif dx > dy: # abs(m) or abs(dy/dx) would be less than one, meaning each column contains a pixel
                 # y coord always changes by 1, x coord will depend on decision parameter
                     x1 += sx
-                    curr_p = prev_p + (2*dy) - (2*dx*(inc_factor))
-                    if curr_p < 0:
-                        inc_factor = 0
+                    curr_p = prev_p
+                    if sy == -1:
+                        curr_p = curr_p - (2*dy) + (2*dx*(inc_factor))
+                        if curr_p > 0:
+                            inc_factor = 0
+                        else:
+                            inc_factor = 1
+                            y1 += sy
                     else:
-                        inc_factor = 1
-                        y1 += sy
+                        curr_p = curr_p + (2*dy) - (2*dx*(inc_factor))
+                        if curr_p < 0:
+                            inc_factor = 0
+                        else:
+                            inc_factor = 1
+                            y1 += sy
                     prev_p = curr_p
                 else: # dx slope is > 1, which means each row would contain a pixel
                     y1 += sy
-                    curr_p = prev_p + (2*dx) - (2*dy*(inc_factor))
-                    if curr_p < 0:
-                        inc_factor = 0
+                    curr_p = prev_p
+                    if sy == -1:
+                        curr_p = curr_p - (2*dx) + (2*dy*(inc_factor))
+                        if curr_p > 0:
+                            inc_factor = 0
+                        else:
+                            inc_factor = 1
+                            x1 += sx
                     else:
-                        inc_factor = 1
-                        x1 += sx
+                        curr_p = curr_p + (2*dx) - (2*dy*(inc_factor))
+                        if curr_p < 0:
+                            inc_factor = 0
+                        else:
+                            inc_factor = 1
+                            x1 += sx
                     prev_p = curr_p
     def drawTriangle(self, buff, p1, p2, p3, doSmooth=True, doAA=False, doAAlevel=4, doTexture=False):
         """
@@ -413,17 +444,30 @@ class Sketch(CanvasBase):
             else:
                 sy= -1
             prev_p = 0
-            if dx > dy:
-                prev_p = (2*dy) - (dx)
-            if dy > dx:
-                prev_p = (2*dx) - (dy)
+            if dx > dy: # base case/p0 for decision parameter
+                # negative slope has a slightly different decision parameter
+                if sy==-1:
+                    prev_p = (dx) - (2*dy)
+                else:
+                    prev_p = (2*dy) - (dx)
+            else:
+                if sy==-1:
+                    prev_p = (dy) - (2*dx)
+                else:
+                    prev_p = (2*dx) - (dy)
             #base case for decision parameter
             # inc factor essentially checks if x or y value should be changed based on the decision paramter
             # which one to change(x or y) depends on the slope
             # 0 means no change(keep yk), 1 means change(use y(k)+1)
             inc_factor = 0
-            if prev_p > 0:
-                inc_factor = 1
+            if sy == -1:
+                if prev_p > 0:
+                    inc_factor = 0
+                else:
+                    inc_factor = 1
+            else:
+                if prev_p > 0:
+                    inc_factor = 1
             steps = max(dx, dy) 
             # print("steps ", steps)
             #print(p1.color.r, p2.color.r)
@@ -454,21 +498,39 @@ class Sketch(CanvasBase):
                 elif dx > dy: # abs(m) or abs(dy/dx) would be less than one, meaning each column contains a pixel
                 # y coord always changes by 1, x coord will depend on decision parameter
                     x1 += sx
-                    curr_p = prev_p + (2*dy) - (2*dx*(inc_factor))
-                    if curr_p < 0:
-                        inc_factor = 0
+                    curr_p = prev_p
+                    if sy == -1:
+                        curr_p = curr_p - (2*dy) + (2*dx*(inc_factor))
+                        if curr_p > 0:
+                            inc_factor = 0
+                        else:
+                            inc_factor = 1
+                            y1 += sy
                     else:
-                        inc_factor = 1
-                        y1 += sy
+                        curr_p = curr_p + (2*dy) - (2*dx*(inc_factor))
+                        if curr_p < 0:
+                            inc_factor = 0
+                        else:
+                            inc_factor = 1
+                            y1 += sy
                     prev_p = curr_p
-                else: # slope is > 1, which means each row would contain a pixel
+                else: # dx slope is > 1, which means each row would contain a pixel
                     y1 += sy
-                    curr_p = prev_p + (2*dx) - (2*dy*(inc_factor))
-                    if curr_p < 0:
-                        inc_factor = 0
+                    curr_p = prev_p
+                    if sy == -1:
+                        curr_p = curr_p - (2*dx) + (2*dy*(inc_factor))
+                        if curr_p > 0:
+                            inc_factor = 0
+                        else:
+                            inc_factor = 1
+                            x1 += sx
                     else:
-                        inc_factor = 1
-                        x1 += sx
+                        curr_p = curr_p + (2*dx) - (2*dy*(inc_factor))
+                        if curr_p < 0:
+                            inc_factor = 0
+                        else:
+                            inc_factor = 1
+                            x1 += sx
                     prev_p = curr_p
         # gathering all the points of the outline of the triangle
         getPoints(p1, p2, doSmooth, doAA, doAAlevel)
