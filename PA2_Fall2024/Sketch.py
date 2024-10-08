@@ -424,7 +424,7 @@ class Sketch(CanvasBase):
             self.update()
         # custom dict to show what each key represents
         cDict2 = {"a": "joint0", "s": "joint1", "d": "joint2", "f": "joint3", "g": "joint4", "h": "joint5",
-            "j": "joint6", "k": "joint7", "l": "joint8", "A": "joint9", "S": "joint10", "D": "torJoint1", "F": "torJoint2", "G": "headJoint"
+            "j": "joint6", "k": "joint7", "l": "joint8", "A": "joint9", "S": "joint10", "D": "bodyJoint1", "F": "bodyJoint2", "G": "headJoint"
             }
         # custom multi-select keys
         if chr(keycode) in cDict2:
@@ -461,8 +461,8 @@ class Sketch(CanvasBase):
             self.cDict["joint9"].rotate(-15, self.cDict["joint9"].axisBucket[1])
             self.cDict["joint10"].rotate(-15, self.cDict["joint10"].axisBucket[1])
             self.cDict["headJoint"].rotate(180, self.cDict["head"].axisBucket[2])
-            self.cDict["torJoint1"].rotate(15, self.cDict["torJoint1"].axisBucket[1])
-            self.cDict["torJoint2"].rotate(-15, self.cDict["torJoint2"].axisBucket[1])
+            self.cDict["bodyJoint1"].rotate(15, self.cDict["bodyJoint1"].axisBucket[1])
+            self.cDict["bodyJoint2"].rotate(-15, self.cDict["bodyJoint2"].axisBucket[1])
         # pose 2: standard scorpion-like look
         if chr(keycode) == "2":
             for c in self.components:
@@ -488,10 +488,10 @@ class Sketch(CanvasBase):
             self.cDict["headJoint"].rotate(-30, self.cDict["headJoint"].axisBucket[2])
             self.cDict["joint0"].rotate(-60, self.cDict["joint0"].axisBucket[0])
             self.cDict["joint1"].rotate(45, self.cDict["joint1"].axisBucket[0])
-            self.cDict["torJoint1"].rotate(-30, self.cDict["torJoint1"].axisBucket[0])
-            self.cDict["torJoint1"].rotate(-15, self.cDict["torJoint1"].axisBucket[1])
-            self.cDict["torJoint2"].rotate(-15, self.cDict["torJoint2"].axisBucket[1])
-            self.cDict["torJoint2"].rotate(-30, self.cDict["torJoint2"].axisBucket[0])
+            self.cDict["bodyJoint1"].rotate(-30, self.cDict["bodyJoint1"].axisBucket[0])
+            self.cDict["bodyJoint1"].rotate(-15, self.cDict["bodyJoint1"].axisBucket[1])
+            self.cDict["bodyJoint2"].rotate(-15, self.cDict["bodyJoint2"].axisBucket[1])
+            self.cDict["bodyJoint2"].rotate(-30, self.cDict["bodyJoint2"].axisBucket[0])
             self.cDict["joint6"].rotate(45, self.cDict["joint6"].axisBucket[0])
             self.cDict["joint7"].rotate(45, self.cDict["joint1"].axisBucket[0])
             self.cDict["joint8"].rotate(45, self.cDict["joint2"].axisBucket[0])
@@ -513,8 +513,8 @@ class Sketch(CanvasBase):
             self.select_obj_idx_list = []
             self.update()
             self.cDict["headJoint"].rotate(-45, self.cDict["headJoint"].axisBucket[0])
-            self.cDict["torJoint1"].rotate(30, self.cDict["torJoint1"].axisBucket[0])
-            self.cDict["torJoint2"].rotate(-30, self.cDict["torJoint2"].axisBucket[0])
+            self.cDict["bodyJoint1"].rotate(30, self.cDict["bodyJoint1"].axisBucket[0])
+            self.cDict["bodyJoint2"].rotate(-30, self.cDict["bodyJoint2"].axisBucket[0])
             self.cDict["joint6"].rotate(-45, self.cDict["joint6"].axisBucket[0])
             self.cDict["joint7"].rotate(45, self.cDict["joint7"].axisBucket[0])
             self.cDict["joint8"].rotate(45, self.cDict["joint8"].axisBucket[0])
@@ -540,7 +540,7 @@ class Sketch(CanvasBase):
             self.cDict["joint4"].rotate(90, self.cDict["joint4"].axisBucket[2])
             self.cDict["joint5"].rotate(-45, self.cDict["joint5"].axisBucket[0])
             self.cDict["joint5"].rotate(90, self.cDict["joint5"].axisBucket[2])
-            self.cDict["torJoint2"].rotate(15, self.cDict["torJoint1"].axisBucket[0])
+            self.cDict["bodyJoint2"].rotate(15, self.cDict["bodyJoint1"].axisBucket[0])
             self.cDict["joint6"].rotate(-45, self.cDict["joint6"].axisBucket[0])
             self.cDict["joint7"].rotate(-45, self.cDict["joint1"].axisBucket[0])
             self.cDict["joint8"].rotate(-45, self.cDict["joint2"].axisBucket[0])

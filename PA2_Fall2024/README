@@ -1,0 +1,9 @@
+PA2: Modeling and Transformations
+
+Name: Steven Yao
+Collaborators: None
+CS480
+
+Summary: I used the given shapes (cones, cylinders, and spheres) to create a model that is loosely based off a scorpion. it has 6 one-jointed
+legs and a 5-jointed tail, and the body is split into 3 parts with 3 joints, with one of the joints connected to head. The head and joints are spheres, the body and tail parts are cylinders, and the tail has a cone for a stinger.
+Due to how scorpion body parts are connected, making clean joints proved really difficult, and is not as smooth as I would like.
