@@ -59,6 +59,14 @@ class ModelLinkage(Component):
         limb_radius = 0.05
         # Rememebr: default plane has x being uAxis, y being vAxis, and z being wAxis
         # limbxy, where x represents the limb number, and y represents upper(1) or lower(0) part of the limb
+        """
+        For Rotations
+        Standard Limbs:
+        - lower limbs: -120-120
+
+        tail1 (the part that connects to torso): -115 to -180
+
+        """
 
         # side 1
         limb11 = Cylinder(Point((0, 0, torso_length)), shaderProg, [limb_radius, limb_radius, limb_length], Ct.DARKORANGE4)
@@ -99,11 +107,24 @@ class ModelLinkage(Component):
         limb62 = Cylinder(Point((0, 0, limb_length)), shaderProg, [limb_radius, limb_radius, limb_length], Ct.RED)
         limb62.rotate(90, self.uAxis)
         
+        # tail 
+        tail_length = 0.25
+        joint7 = Sphere(Point((0 , 0, -torso_length)), shaderProg, [torso_radius, torso_radius, torso_radius], Ct.RED)
+        tail1 = Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius, limb_radius, tail_length], Ct.DARKORANGE4) 
+        tail1.rotate(-110, self.uAxis) # min: -115 uAxis, max: -180
+        joint8 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius, torso_radius], Ct.RED)
+        tail2 = Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius, limb_radius, tail_length], Ct.DARKORANGE4) 
+        joint9 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius, torso_radius], Ct.RED)
+        tail3= Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius, limb_radius, tail_length], Ct.DARKORANGE4) 
+        joint10 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius, torso_radius], Ct.RED)
+        tail4= Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius, limb_radius, tail_length], Ct.DARKORANGE4) 
+
+
         # attach head and torso
         self.addChild(torso)
         torso.addChild(head)
 
-        # attaching limbs
+        # attaching regular limbs
         torso.addChild(limb11)
         limb11.addChild(joint1)
         joint1.addChild(limb12)
@@ -128,8 +149,19 @@ class ModelLinkage(Component):
         limb61.addChild(joint6)
         joint6.addChild(limb62)
 
+        # attaching tail
+        torso.addChild(joint7)
+        joint7.addChild(tail1)
+        tail1.addChild(joint8)
+        joint8.addChild(tail2)
+        tail2.addChild(joint9)
+        joint9.addChild(tail3)
+        tail3.addChild(joint10)
+        joint10.addChild(tail4)
+
+
         # Store components in a dictionary for easier access
-        self.componentList = [torso, head, limb11, joint1, limb12, limb21, joint2, limb22, limb31, joint3, limb32, limb41, joint4, limb42, limb51, joint5, limb52, limb61, joint6, limb62]
+        self.componentList = [torso, head, limb11, joint1, limb12, limb21, joint2, limb22, limb31, joint3, limb32, limb41, joint4, limb42, limb51, joint5, limb52, limb61, joint6, limb62, joint7, tail1, joint8, tail2, joint9, tail3, joint10, tail4]
         self.componentDict = {
             "torso": torso,
             "head": head,
@@ -138,7 +170,8 @@ class ModelLinkage(Component):
             "limb31": limb31, "joint3": joint3, "limb32": limb32,
             "limb41": limb41, "joint4": joint4, "limb42": limb42,
             "limb51": limb51, "joint5": joint5, "limb52": limb52,
-            "limb61": limb61, "joint6": joint6, "limb62": limb62
+            "limb61": limb61, "joint6": joint6, "limb62": limb62,
+            "joint7": joint7, "tail1": tail1, "joint8": joint8, "tail2": tail2, "joint9": joint9, "tail3": tail3, "joint10": joint10, "tail4": tail4
         }
 
 
