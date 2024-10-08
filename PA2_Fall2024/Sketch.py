@@ -164,7 +164,6 @@ class Sketch(CanvasBase):
 
         self.components = model.componentList
         self.cDict = model.componentDict
-
         gl.glClearColor(*self.backgroundColor, 1.0)
         gl.glClearDepth(1.0)
         gl.glViewport(0, 0, self.size[0], self.size[1])
