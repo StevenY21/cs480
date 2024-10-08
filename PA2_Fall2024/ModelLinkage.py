@@ -50,7 +50,7 @@ class ModelLinkage(Component):
         torso_length = 0.25
         torso_radius = 0.1
         torso1 = Cylinder(Point((0, 0, 0)), shaderProg, [torso_radius * 3, torso_radius, jointLength], Ct.SOFTBLUE)
-        torJoint1 = Sphere(Point((0, 0, jointLength)), shaderProg, [torso_radius * 0.9, torso_radius * 0.5, jointLength/2], Ct.YELLOW)
+        torJoint1 = Sphere(Point((0, 0, jointLength)), shaderProg, [torso_radius, torso_radius * 0.5, jointLength/2], Ct.YELLOW)
         torso2 = Cylinder(Point((0, 0, jointLength)), shaderProg, [torso_radius * 3 * 0.9, torso_radius * 0.9, jointLength], Ct.CYAN)
         torJoint2 = Sphere(Point((0, 0, jointLength)), shaderProg, [torso_radius * 3 * 0.8, torso_radius * 0.25, jointLength/2], Ct.YELLOW)
         torso3 = Cylinder(Point((0, 0, jointLength)), shaderProg, [torso_radius * 3 * 0.8, torso_radius * 0.8, jointLength], Ct.BLUE)
@@ -116,16 +116,20 @@ class ModelLinkage(Component):
         
         # tail 
         tail_length = 0.25
-        joint6 = Sphere(Point((0 , 0, -torso_length * 0.5)), shaderProg, [torso_radius, torso_radius/2, torso_radius], Ct.PURPLE)
+        joint6 = Sphere(Point((0 , 0, -torso_length * 0.25)), shaderProg, [torso_radius, torso_radius/2, torso_radius], Ct.PURPLE)
         tail1 = Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius*5, torso_radius, tail_length], Ct.DARKORANGE4) 
-        joint6.setDefaultAngle(-110, self.uAxis) # min: -115 uAxis, max: -180
+        joint6.setDefaultAngle(-180, self.uAxis)
         joint7 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius/2, torso_radius], Ct.PURPLE)
+        joint7.setDefaultAngle(0, self.uAxis)
         tail2 = Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius*4.5, torso_radius, tail_length], Ct.DARKORANGE4) 
         joint8 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius/2, torso_radius], Ct.PURPLE)
+        joint8.setDefaultAngle(0, self.uAxis)
         tail3= Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius*4, torso_radius, tail_length], Ct.DARKORANGE4) 
         joint9 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius/2, torso_radius], Ct.PURPLE)
+        joint9.setDefaultAngle(0, self.uAxis)
         tail4= Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius*3.5, torso_radius, tail_length], Ct.DARKORANGE4) 
         joint10 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius/2, torso_radius], Ct.PURPLE)
+        joint10.setDefaultAngle(0, self.uAxis)
         tail5= Cone(Point((0, 0, tail_length)), shaderProg, [limb_radius*3.5, torso_radius, tail_length], Ct.DARKORANGE4) 
 
 
@@ -176,7 +180,7 @@ class ModelLinkage(Component):
         joint10.addChild(tail5)
 
         # Store components in a dictionary for easier access
-        self.componentList = [torJoint1, torJoint2, joint0, joint1, joint2, joint3, joint4, joint5, joint6, joint7, joint8, joint9, joint10]
+        self.componentList = [torJoint1, torJoint2, head, joint0, joint1, joint2, joint3, joint4, joint5, joint6, joint7, joint8, joint9, joint10]
         self.componentDict = {
             "torso1": torso1, "torso2":torso2, "torso3": torso3,
             "head": head, "eye1": eye1, "eye2": eye2, "mouth1": mouth1, "mouth2": mouth2,
@@ -199,6 +203,85 @@ class ModelLinkage(Component):
         # the opposing limbs have the same rotations, just in opposite directions:
         # for joints 0 through 5
         joint0.setRotateExtent(self.uAxis, 45, 135)
+        joint0.setRotateExtent(self.vAxis, joint0.default_vAngle, joint0.default_vAngle)
         joint0.setRotateExtent(self.wAxis, 0, 180)
+        joint1.setRotateExtent(self.uAxis, 45, 135)
+        joint1.setRotateExtent(self.vAxis, joint1.default_vAngle, joint1.default_vAngle)
+        joint1.setRotateExtent(self.wAxis, 0, 180)
+        joint2.setRotateExtent(self.uAxis, 45, 135)
+        joint2.setRotateExtent(self.vAxis, joint2.default_vAngle, joint2.default_vAngle)
+        joint2.setRotateExtent(self.wAxis, 0, 180)
         joint3.setRotateExtent(self.uAxis, 45, 135)
-        joint3.setRotateExtent(self.wAxis, 0, 180)
+        joint3.setRotateExtent(self.vAxis, joint3.default_vAngle, joint3.default_vAngle)
+        joint3.setRotateExtent(self.wAxis, -180, 0)
+        joint4.setRotateExtent(self.uAxis, 45, 135)
+        joint4.setRotateExtent(self.vAxis, joint4.default_vAngle, joint4.default_vAngle)
+        joint4.setRotateExtent(self.wAxis, -180, 0)
+        joint5.setRotateExtent(self.uAxis, 45, 135)
+        joint5.setRotateExtent(self.vAxis, joint5.default_vAngle, joint5.default_vAngle)
+        joint5.setRotateExtent(self.wAxis, -180, 0)
+
+        # torso and other static components
+        torso1.setRotateExtent(self.uAxis, torso1.default_uAngle, torso1.default_uAngle)
+        torso1.setRotateExtent(self.vAxis, torso1.default_vAngle, torso1.default_vAngle)
+        torso1.setRotateExtent(self.wAxis, torso1.default_wAngle, torso1.default_wAngle)
+        torso2.setRotateExtent(self.uAxis, torso2.default_uAngle, torso2.default_uAngle)
+        torso2.setRotateExtent(self.vAxis, torso2.default_vAngle, torso2.default_vAngle)
+        torso2.setRotateExtent(self.wAxis, torso2.default_wAngle, torso2.default_wAngle)
+        torso3.setRotateExtent(self.uAxis, torso3.default_uAngle, torso3.default_uAngle)
+        torso3.setRotateExtent(self.vAxis, torso3.default_vAngle, torso3.default_vAngle)
+        torso3.setRotateExtent(self.wAxis, torso3.default_wAngle, torso3.default_wAngle)
+        tail1.setRotateExtent(self.uAxis, tail1.default_uAngle, tail1.default_uAngle)
+        tail1.setRotateExtent(self.vAxis, tail1.default_vAngle, tail1.default_vAngle)
+        tail1.setRotateExtent(self.wAxis, tail1.default_wAngle, tail1.default_wAngle)    
+        tail2.setRotateExtent(self.uAxis, tail2.default_uAngle, tail2.default_uAngle)
+        tail2.setRotateExtent(self.vAxis, tail2.default_vAngle, tail2.default_vAngle)
+        tail2.setRotateExtent(self.wAxis, tail2.default_wAngle, tail2.default_wAngle)    
+        tail3.setRotateExtent(self.uAxis, tail3.default_uAngle, tail3.default_uAngle)
+        tail3.setRotateExtent(self.vAxis, tail3.default_vAngle, tail3.default_vAngle)
+        tail3.setRotateExtent(self.wAxis, tail3.default_wAngle, tail3.default_wAngle)   
+        tail4.setRotateExtent(self.uAxis, tail4.default_uAngle, tail4.default_uAngle)
+        tail4.setRotateExtent(self.vAxis, tail4.default_vAngle, tail4.default_vAngle)
+        tail4.setRotateExtent(self.wAxis, tail4.default_wAngle, tail4.default_wAngle)  
+        eye1.setRotateExtent(self.uAxis, eye1.default_uAngle, eye1.default_uAngle)
+        eye1.setRotateExtent(self.vAxis, eye1.default_vAngle, eye1.default_vAngle)
+        eye1.setRotateExtent(self.wAxis, eye1.default_wAngle, eye1.default_wAngle)  
+        eye2.setRotateExtent(self.uAxis, eye2.default_uAngle, eye2.default_uAngle)
+        eye2.setRotateExtent(self.vAxis, eye2.default_vAngle, eye2.default_vAngle)
+        eye2.setRotateExtent(self.wAxis, eye2.default_wAngle, eye2.default_wAngle)  
+        mouth1.setRotateExtent(self.uAxis, mouth1.default_uAngle, mouth1.default_uAngle)
+        mouth1.setRotateExtent(self.vAxis, mouth1.default_vAngle, mouth1.default_vAngle)
+        mouth1.setRotateExtent(self.wAxis, mouth1.default_wAngle, mouth1.default_wAngle)  
+        mouth2.setRotateExtent(self.uAxis, mouth2.default_uAngle, mouth2.default_uAngle)
+        mouth2.setRotateExtent(self.vAxis, mouth2.default_vAngle, mouth2.default_vAngle)
+        mouth2.setRotateExtent(self.wAxis, mouth2.default_wAngle, mouth2.default_wAngle)            
+
+        # for torso joints
+        torJoint1.setRotateExtent(self.uAxis, -30, 30)
+        torJoint1.setRotateExtent(self.vAxis, torJoint1.default_vAngle, torJoint1.default_vAngle)
+        torJoint1.setRotateExtent(self.wAxis, torJoint1.default_wAngle, torJoint1.default_wAngle)
+        torJoint2.setRotateExtent(self.uAxis, -30, 30)
+        torJoint2.setRotateExtent(self.vAxis, torJoint2.default_vAngle, torJoint2.default_vAngle)
+        torJoint2.setRotateExtent(self.wAxis, torJoint2.default_wAngle, torJoint2.default_wAngle)
+
+        # tail joints, 6-10
+        joint6.setRotateExtent(self.uAxis, -225, -135)
+        joint6.setRotateExtent(self.vAxis, joint6.default_vAngle, joint6.default_vAngle)
+        joint6.setRotateExtent(self.wAxis, joint6.default_wAngle, joint6.default_wAngle)
+        joint7.setRotateExtent(self.uAxis, -45, 45)
+        joint7.setRotateExtent(self.vAxis, joint7.default_vAngle, joint7.default_vAngle)
+        joint7.setRotateExtent(self.wAxis, joint7.default_wAngle, joint7.default_wAngle)
+        joint8.setRotateExtent(self.uAxis, -45, 45)
+        joint8.setRotateExtent(self.vAxis, joint8.default_vAngle, joint8.default_vAngle)
+        joint8.setRotateExtent(self.wAxis, joint8.default_wAngle, joint8.default_wAngle)
+        joint9.setRotateExtent(self.uAxis, -45, 45)
+        joint9.setRotateExtent(self.vAxis, joint9.default_vAngle, joint9.default_vAngle)
+        joint9.setRotateExtent(self.wAxis, joint9.default_wAngle, joint9.default_wAngle)
+        joint10.setRotateExtent(self.uAxis, -45, 45)
+        joint10.setRotateExtent(self.vAxis, joint10.default_vAngle, joint10.default_vAngle)
+        joint10.setRotateExtent(self.wAxis, joint10.default_wAngle, joint10.default_wAngle)
+
+        # head
+        head.setRotateExtent(self.uAxis, head.default_uAngle, head.default_uAngle)
+        head.setRotateExtent(self.vAxis, head.default_vAngle, head.default_vAngle)
+
