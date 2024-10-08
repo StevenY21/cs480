@@ -293,5 +293,6 @@ class ModelLinkage(Component):
         head.setRotateExtent(self.vAxis, head.default_vAngle, head.default_vAngle)
         head.setRotateExtent(self.wAxis, head.default_wAngle, head.default_wAngle)  
         headJoint.setRotateExtent(self.uAxis, -45, 45)
+        headJoint.setRotateExtent(self.wAxis, 15, -15)
         headJoint.setRotateExtent(self.vAxis, -15, 15)
 

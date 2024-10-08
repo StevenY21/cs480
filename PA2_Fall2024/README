@@ -7,3 +7,20 @@ CS480
 Summary: I used the given shapes (cones, cylinders, and spheres) to create a model that is loosely based off a scorpion. it has 6 one-jointed
 legs and a 5-jointed tail, and the body is split into 3 parts with 3 joints, with one of the joints connected to head. The head and joints are spheres, the body and tail parts are cylinders, and the tail has a cone for a stinger.
 Due to how scorpion body parts are connected, making clean joints proved really difficult, and is not as smooth as I would like.
+
+KeyBinds:
+a: joint0
+s: joint1
+d: joint2
+f: joint3
+g: joint4
+h: joint5
+j: joint6
+joints 7-11 are less visible, as I tred to make the tail more seamless
+k: joint7
+l: joint8
+A: joint9
+S: joint10
+D: bodyJoint1
+F: bodyJoint2
+G: headJoint

@@ -460,7 +460,7 @@ class Sketch(CanvasBase):
             self.cDict["joint8"].rotate(-15, self.cDict["joint8"].axisBucket[1])
             self.cDict["joint9"].rotate(-15, self.cDict["joint9"].axisBucket[1])
             self.cDict["joint10"].rotate(-15, self.cDict["joint10"].axisBucket[1])
-            self.cDict["headJoint"].rotate(180, self.cDict["head"].axisBucket[2])
+            self.cDict["headJoint"].rotate(15, self.cDict["head"].axisBucket[2])
             self.cDict["bodyJoint1"].rotate(15, self.cDict["bodyJoint1"].axisBucket[1])
             self.cDict["bodyJoint2"].rotate(-15, self.cDict["bodyJoint2"].axisBucket[1])
         # pose 2: standard scorpion-like look
