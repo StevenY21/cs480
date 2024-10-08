@@ -42,108 +42,105 @@ class ModelLinkage(Component):
     def __init__(self, parent, position, shaderProg, display_obj=None):
         super().__init__(position, display_obj)
         self.contextParent = parent
-
+        # note: a few of these variables are not used exactly as specified, due to me constantly modifying each individual component
+        # they are the standard for some parts, but not the standard for other parts
         # assume joints are sphere
-        joint_radius = 0.1
-        jointLength = 0.25
-        # Torso
-        torso_length = 0.25
-        torso_width = 0.3
-        torso_radius = 0.1
-        # torsos get smaller and smaller the closer it gets to the head
-        torso1 = Cylinder(Point((0, 0, 0)), shaderProg, [torso_width, torso_radius, jointLength], Ct.SOFTBLUE)
-        torJoint1 = Sphere(Point((0, 0, jointLength)), shaderProg, [torso_width, torso_radius, jointLength/2], Ct.YELLOW)
-        torso2 = Cylinder(Point((0, 0, jointLength)), shaderProg, [torso_width * 0.9, torso_radius * 0.9, jointLength], Ct.CYAN)
-        torJoint2 = Sphere(Point((0, 0, jointLength)), shaderProg, [torso_width * 0.8, torso_radius * 0.9, jointLength/2], Ct.YELLOW)
-        torso3 = Cylinder(Point((0, 0, jointLength)), shaderProg, [torso_width * 0.8, torso_radius * 0.8, jointLength], Ct.BLUE)
+        jointRad = 0.1
+        jointLen = 0.25
+        # Torso parts are Cylinders
+        torsoLen = 0.25
+        torsoWid = 0.3
+        torsoRad = 0.1
+        # torso parts and joints get smaller and smaller the closer it gets to the head
+        torso1 = Cylinder(Point((0, 0, 0)), shaderProg, [torsoWid, torsoRad, jointLen], Ct.SOFTBLUE)
+        torJoint1 = Sphere(Point((0, 0, jointLen)), shaderProg, [torsoWid, torsoRad, jointLen/2], Ct.YELLOW)
+        torso2 = Cylinder(Point((0, 0, jointLen)), shaderProg, [torsoWid * 0.9, torsoRad * 0.9, jointLen], Ct.CYAN)
+        torJoint2 = Sphere(Point((0, 0, jointLen)), shaderProg, [torsoWid * 0.8, torsoRad * 0.9, jointLen/2], Ct.YELLOW)
+        torso3 = Cylinder(Point((0, 0, jointLen)), shaderProg, [torsoWid * 0.8, torsoRad * 0.8, jointLen], Ct.BLUE)
 
-        # Head
-        head_size = 0.2
-        head = Sphere(Point((0, 0, torso_length)), shaderProg, [torso_width , torso_radius, head_size], Ct.YELLOW)
-        # mouth
-        mouth_size = head_size/5
-        mouth1 = Cone(Point((torso_radius, 0, head_size)), shaderProg, [mouth_size, mouth_size, mouth_size], Ct.GRAY)
-        mouth2 = Cone(Point((-torso_radius, 0, head_size)), shaderProg, [mouth_size, mouth_size, mouth_size], Ct.GRAY)
+        # Head is a sphere
+        headSize = 0.2
+        headJoint = Sphere(Point((0, 0, jointLen)), shaderProg, [torsoWid * 0.7, torsoRad * 0.8, jointLen/4], Ct.GREEN)
+        head = Sphere(Point((0, 0, jointLen * 0.5)), shaderProg, [torsoWid , torsoRad, headSize], Ct.YELLOW)
+        # mouth has 2 cones
+        mouth_size = headSize/5
+        mouth1 = Cone(Point((torsoRad, 0, headSize)), shaderProg, [mouth_size, mouth_size, mouth_size], Ct.GRAY)
+        mouth2 = Cone(Point((-torsoRad, 0, headSize)), shaderProg, [mouth_size, mouth_size, mouth_size], Ct.GRAY)
 
-        # eyes
-        eye_size = 0.02
-        eye1 = Cube(Point((eye_size*2, torso_radius * 0.75, head_size * 0.5)), shaderProg, [eye_size, eye_size, eye_size], Ct.GRAY)
-        eye2 = Cube(Point((eye_size*-2, torso_radius * 0.75, head_size * 0.5)), shaderProg, [eye_size, eye_size, eye_size], Ct.GRAY)
+        # eyes are 2 small spheres
+        eyeSize = 0.02
+        eye1 = Cube(Point((eyeSize*2, torsoRad * 0.75, headSize * 0.5)), shaderProg, [eyeSize, eyeSize, eyeSize], Ct.GRAY)
+        eye2 = Cube(Point((eyeSize*-2, torsoRad * 0.75, headSize * 0.5)), shaderProg, [eyeSize, eyeSize, eyeSize], Ct.GRAY)
 
         # assume limbs are cylinder
-        limb_length = 0.2
-        limb_radius = 0.05
+        limbLen = 0.2
+        limbRad = 0.05
         # Rememebr: default plane has x being uAxis, y being vAxis, and z being wAxis
         # limbxy, where x represents the limb number, and y represents upper(1) or lower(0) part of the limb
-        """
-        For Rotations
-        Standard Limbs:
-        - lower limbs: -120-120
-
-        tail1 (the part that connects to torso): -115 to -180
-
-        """
 
         # side 1
-        joint0 =  Sphere(Point(( joint_radius *2 , 0, torso_length * 0.5)), shaderProg, [joint_radius, joint_radius, joint_radius], Ct.DARKORANGE3)
-        limb11 = Cylinder(Point((0, 0, limb_length)), shaderProg, [limb_radius, limb_radius, limb_length* 0.75], Ct.DARKORANGE4)
+        joint0 =  Sphere(Point(( jointRad *2 , 0, torsoLen * 0.5)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
+        limb11 = Cylinder(Point((0, 0, limbLen)), shaderProg, [limbRad, limbRad, limbLen* 0.75], Ct.DARKORANGE4)
         joint0.setDefaultAngle(45, self.wAxis)
         joint0.setDefaultAngle(90, self.uAxis)
 
-        joint1 =  Sphere(Point(( joint_radius *2 , 0, torso_length * 0.5)), shaderProg, [joint_radius, joint_radius, joint_radius], Ct.DARKORANGE3)
-        limb21 = Cylinder(Point((0, 0, limb_length)), shaderProg, [limb_radius, limb_radius,limb_length* 0.75], Ct.DARKORANGE4)
+        joint1 =  Sphere(Point(( jointRad *2 , 0, torsoLen * 0.5)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
+        limb21 = Cylinder(Point((0, 0, limbLen)), shaderProg, [limbRad, limbRad, limbLen* 0.75], Ct.DARKORANGE4)
         joint1.setDefaultAngle(45, self.wAxis)
         joint1.setDefaultAngle(90, self.uAxis)
 
-        joint2 =  Sphere(Point(( joint_radius *2 , 0, torso_length * 0.5)), shaderProg, [joint_radius, joint_radius, joint_radius], Ct.DARKORANGE3)
-        limb31 = Cylinder(Point((0, 0, limb_length)), shaderProg, [limb_radius, limb_radius, limb_length* 0.75], Ct.DARKORANGE4)
+        joint2 =  Sphere(Point(( jointRad *2 , 0, torsoLen * 0.5)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
+        limb31 = Cylinder(Point((0, 0, limbLen)), shaderProg, [limbRad, limbRad, limbLen* 0.75], Ct.DARKORANGE4)
         joint2.setDefaultAngle(45, self.wAxis)
         joint2.setDefaultAngle(90, self.uAxis)
 
-        # side 2/opposing side of side 1
-        joint3 =  Sphere(Point(( -joint_radius *2 , 0, torso_length * 0.5)), shaderProg, [joint_radius, joint_radius, joint_radius], Ct.DARKORANGE3)
-        limb41 = Cylinder(Point((0, 0, limb_length)), shaderProg, [limb_radius, limb_radius, limb_length* 0.75], Ct.DARKORANGE4)
+        # side 2/opposing side of side 1, which puts on the other side/ negative x side
+        joint3 =  Sphere(Point(( -jointRad *2 , 0, torsoLen * 0.5)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
+        limb41 = Cylinder(Point((0, 0, limbLen)), shaderProg, [limbRad, limbRad, limbLen* 0.75], Ct.DARKORANGE4)
         joint3.setDefaultAngle(315, self.wAxis)
         joint3.setDefaultAngle(90, self.uAxis)
         
-        joint4 =  Sphere(Point(( -joint_radius *2 , 0, torso_length * 0.5)), shaderProg, [joint_radius, joint_radius, joint_radius], Ct.DARKORANGE3)
-        limb51 = Cylinder(Point((0, 0, limb_length)), shaderProg, [limb_radius, limb_radius, limb_length* 0.75], Ct.DARKORANGE4)
+        joint4 =  Sphere(Point(( -jointRad *2 , 0, torsoLen * 0.5)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
+        limb51 = Cylinder(Point((0, 0, limbLen)), shaderProg, [limbRad, limbRad, limbLen* 0.75], Ct.DARKORANGE4)
         joint4.setDefaultAngle(315, self.wAxis)
         joint4.setDefaultAngle(90, self.uAxis)
 
-        joint5 =  Sphere(Point(( -joint_radius *2 , 0, torso_length * 0.5)), shaderProg, [joint_radius, joint_radius, joint_radius], Ct.DARKORANGE3)
-        limb61 = Cylinder(Point((0, 0, limb_length)), shaderProg, [limb_radius, limb_radius, limb_length* 0.75], Ct.DARKORANGE4)
+        joint5 =  Sphere(Point(( -jointRad *2 , 0, torsoLen * 0.5)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
+        limb61 = Cylinder(Point((0, 0, limbLen)), shaderProg, [limbRad, limbRad, limbLen* 0.75], Ct.DARKORANGE4)
         joint5.setDefaultAngle(315, self.wAxis)
         joint5.setDefaultAngle(90, self.uAxis)    
         
-        # tail 
-        tail_length = 0.25
-        joint6 = Sphere(Point((0 , 0, -torso_length * 0.25)), shaderProg, [torso_radius, torso_radius, tail_length/2], Ct.PURPLE)
-        tail1 = Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius*5, torso_radius, tail_length], Ct.DARKORANGE4) 
+        # tailparts are cylinders and one cone
+        tailLen = 0.25
+        # joint 6 is a little different due to being attached to the initial torso, and will have a "reflected" angle range
+        joint6 = Sphere(Point((0 , 0, -torsoLen * 0.25)), shaderProg, [torsoWid, torsoRad, tailLen/2], Ct.PURPLE)
+        tail1 = Cylinder(Point((0, 0, tailLen)), shaderProg, [limbRad*5, torsoRad, tailLen], Ct.DARKORANGE1) 
         joint6.setDefaultAngle(-180, self.uAxis)
-        joint7 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius, tail_length/2], Ct.PURPLE)
+        # tail parts get smaller and smaller 
+        joint7 = Sphere(Point((0 , 0, tailLen)), shaderProg, [torsoRad, torsoRad, tailLen/2], Ct.PURPLE)
         joint7.setDefaultAngle(0, self.uAxis)
-        tail2 = Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius*4.5, torso_radius, tail_length], Ct.DARKORANGE4) 
-        joint8 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius, tail_length/2], Ct.PURPLE)
+        tail2 = Cylinder(Point((0, 0, tailLen)), shaderProg, [limbRad*4.5, torsoRad, tailLen], Ct.DARKORANGE2) 
+        joint8 = Sphere(Point((0 , 0, tailLen)), shaderProg, [torsoRad, torsoRad, tailLen/2], Ct.PURPLE)
         joint8.setDefaultAngle(0, self.uAxis)
-        tail3= Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius*4, torso_radius, tail_length], Ct.DARKORANGE4) 
-        joint9 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius, tail_length/2], Ct.PURPLE)
+        tail3= Cylinder(Point((0, 0, tailLen)), shaderProg, [limbRad*4, torsoRad, tailLen], Ct.DARKORANGE3) 
+        joint9 = Sphere(Point((0 , 0, tailLen)), shaderProg, [torsoRad, torsoRad, tailLen/2], Ct.PURPLE)
         joint9.setDefaultAngle(0, self.uAxis)
-        tail4= Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius*3.5, torso_radius, tail_length], Ct.DARKORANGE4) 
-        joint10 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius, tail_length/2], Ct.PURPLE)
+        tail4= Cylinder(Point((0, 0, tailLen)), shaderProg, [limbRad*3.5, torsoRad, tailLen], Ct.DARKORANGE4) 
+        joint10 = Sphere(Point((0 , 0, tailLen)), shaderProg, [torsoRad, torsoRad, tailLen/2], Ct.PURPLE)
         joint10.setDefaultAngle(0, self.uAxis)
-        tail5= Cone(Point((0, 0, tail_length)), shaderProg, [limb_radius*3.5, torso_radius, tail_length], Ct.DARKORANGE4) 
+        tail5= Cone(Point((0, 0, tailLen)), shaderProg, [limbRad*3.5, torsoRad, tailLen], Ct.BLACK) 
 
 
-        # attach head and torso
+        # attach head and torso parts
         self.addChild(torso1)
         torso1.addChild(torso2)
         torso1.addChild(torJoint1)
         torJoint1.addChild(torso2)
         torso2.addChild(torJoint2)
         torJoint2.addChild(torso3)
-        torso3.addChild(head)
+        torso3.addChild(headJoint)
         
+        headJoint.addChild(head)
         head.addChild(eye1)
         head.addChild(eye2)
         head.addChild(mouth1)
@@ -182,9 +179,11 @@ class ModelLinkage(Component):
         joint10.addChild(tail5)
 
         # Store components in a dictionary for easier access
-        self.componentList = [torJoint1, torJoint2, head, joint0, joint1, joint2, joint3, joint4, joint5, joint6, joint7, joint8, joint9, joint10]
+        self.componentList = [torJoint1, torJoint2, headJoint, joint0, joint1, joint2, joint3, joint4, joint5, joint6, joint7, joint8, joint9, joint10
+                              
+                              ]
         self.componentDict = {
-            "torso1": torso1, "torso2":torso2, "torso3": torso3,
+            "torso1": torso1, "torso2":torso2, "torso3": torso3, "headJoint": headJoint,
             "head": head, "eye1": eye1, "eye2": eye2, "mouth1": mouth1, "mouth2": mouth2,
             "joint0": joint0, "limb11": limb11,
             "joint1": joint1, "limb21": limb21, 
@@ -204,8 +203,9 @@ class ModelLinkage(Component):
         #   2. Orientation of joint rotations for the left and right parts should mirror each other.
         # 
         
-        # the opposing limbs have the same rotations, just in opposite directions:
+        # the opposing limbs have the same rotation extent, will be rotating differently to deal with mirrored movement
         # for joints 0 through 5
+        # all these joints cannot rotate in the y axis, only in x and z
         joint0.setRotateExtent(self.uAxis, 45, 135)
         joint0.setRotateExtent(self.vAxis, joint0.default_vAngle, joint0.default_vAngle)
         joint0.setRotateExtent(self.wAxis, 0, 180)
@@ -226,6 +226,7 @@ class ModelLinkage(Component):
         joint5.setRotateExtent(self.wAxis, 180, 360)
 
         # torso and other static components
+        # set to not be able to be moved, this part is possibly redundant
         torso1.setRotateExtent(self.uAxis, torso1.default_uAngle, torso1.default_uAngle)
         torso1.setRotateExtent(self.vAxis, torso1.default_vAngle, torso1.default_vAngle)
         torso1.setRotateExtent(self.wAxis, torso1.default_wAngle, torso1.default_wAngle)
@@ -262,30 +263,35 @@ class ModelLinkage(Component):
 
         # for torso joints
         torJoint1.setRotateExtent(self.uAxis, -30, 30)
-        torJoint1.setRotateExtent(self.vAxis, torJoint1.default_vAngle, torJoint1.default_vAngle)
+        torJoint1.setRotateExtent(self.vAxis, -15, 15)
         torJoint1.setRotateExtent(self.wAxis, torJoint1.default_wAngle, torJoint1.default_wAngle)
         torJoint2.setRotateExtent(self.uAxis, -30, 30)
-        torJoint2.setRotateExtent(self.vAxis, torJoint2.default_vAngle, torJoint2.default_vAngle)
+        torJoint2.setRotateExtent(self.vAxis,-15, 15)
         torJoint2.setRotateExtent(self.wAxis, torJoint2.default_wAngle, torJoint2.default_wAngle)
 
         # tail joints, 6-10
+        # all tail joints can move along x and y but not z
         joint6.setRotateExtent(self.uAxis, -225, -135)
-        joint6.setRotateExtent(self.vAxis, joint6.default_vAngle, joint6.default_vAngle)
+        joint6.setRotateExtent(self.vAxis, -15, 15)
         joint6.setRotateExtent(self.wAxis, joint6.default_wAngle, joint6.default_wAngle)
         joint7.setRotateExtent(self.uAxis, -45, 45)
-        joint7.setRotateExtent(self.vAxis, joint7.default_vAngle, joint7.default_vAngle)
+        joint7.setRotateExtent(self.vAxis, -15, 15)
         joint7.setRotateExtent(self.wAxis, joint7.default_wAngle, joint7.default_wAngle)
         joint8.setRotateExtent(self.uAxis, -45, 45)
-        joint8.setRotateExtent(self.vAxis, joint8.default_vAngle, joint8.default_vAngle)
+        joint8.setRotateExtent(self.vAxis, -15, 15)
         joint8.setRotateExtent(self.wAxis, joint8.default_wAngle, joint8.default_wAngle)
         joint9.setRotateExtent(self.uAxis, -45, 45)
-        joint9.setRotateExtent(self.vAxis, joint9.default_vAngle, joint9.default_vAngle)
+        joint9.setRotateExtent(self.vAxis, -15, 15)
         joint9.setRotateExtent(self.wAxis, joint9.default_wAngle, joint9.default_wAngle)
         joint10.setRotateExtent(self.uAxis, -45, 45)
-        joint10.setRotateExtent(self.vAxis, joint10.default_vAngle, joint10.default_vAngle)
+        joint10.setRotateExtent(self.vAxis, -15, 15)
         joint10.setRotateExtent(self.wAxis, joint10.default_wAngle, joint10.default_wAngle)
 
         # head
+        # the joint can rotate the entire z-axis, and move in x and y
         head.setRotateExtent(self.uAxis, head.default_uAngle, head.default_uAngle)
         head.setRotateExtent(self.vAxis, head.default_vAngle, head.default_vAngle)
+        head.setRotateExtent(self.wAxis, head.default_wAngle, head.default_wAngle)  
+        headJoint.setRotateExtent(self.uAxis, -45, 45)
+        headJoint.setRotateExtent(self.vAxis, -15, 15)
 
