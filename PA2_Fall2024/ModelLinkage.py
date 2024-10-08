@@ -48,16 +48,18 @@ class ModelLinkage(Component):
         jointLength = 0.25
         # Torso
         torso_length = 0.25
+        torso_width = 0.3
         torso_radius = 0.1
-        torso1 = Cylinder(Point((0, 0, 0)), shaderProg, [torso_radius * 3, torso_radius, jointLength], Ct.SOFTBLUE)
-        torJoint1 = Sphere(Point((0, 0, jointLength)), shaderProg, [torso_radius, torso_radius * 0.5, jointLength/2], Ct.YELLOW)
-        torso2 = Cylinder(Point((0, 0, jointLength)), shaderProg, [torso_radius * 3 * 0.9, torso_radius * 0.9, jointLength], Ct.CYAN)
-        torJoint2 = Sphere(Point((0, 0, jointLength)), shaderProg, [torso_radius * 3 * 0.8, torso_radius * 0.25, jointLength/2], Ct.YELLOW)
-        torso3 = Cylinder(Point((0, 0, jointLength)), shaderProg, [torso_radius * 3 * 0.8, torso_radius * 0.8, jointLength], Ct.BLUE)
+        # torsos get smaller and smaller the closer it gets to the head
+        torso1 = Cylinder(Point((0, 0, 0)), shaderProg, [torso_width, torso_radius, jointLength], Ct.SOFTBLUE)
+        torJoint1 = Sphere(Point((0, 0, jointLength)), shaderProg, [torso_width, torso_radius, jointLength/2], Ct.YELLOW)
+        torso2 = Cylinder(Point((0, 0, jointLength)), shaderProg, [torso_width * 0.9, torso_radius * 0.9, jointLength], Ct.CYAN)
+        torJoint2 = Sphere(Point((0, 0, jointLength)), shaderProg, [torso_width * 0.8, torso_radius * 0.9, jointLength/2], Ct.YELLOW)
+        torso3 = Cylinder(Point((0, 0, jointLength)), shaderProg, [torso_width * 0.8, torso_radius * 0.8, jointLength], Ct.BLUE)
 
         # Head
         head_size = 0.2
-        head = Sphere(Point((0, 0, torso_length)), shaderProg, [torso_radius * 3, torso_radius, head_size], Ct.YELLOW)
+        head = Sphere(Point((0, 0, torso_length)), shaderProg, [torso_width , torso_radius, head_size], Ct.YELLOW)
         # mouth
         mouth_size = head_size/5
         mouth1 = Cone(Point((torso_radius, 0, head_size)), shaderProg, [mouth_size, mouth_size, mouth_size], Ct.GRAY)
@@ -116,19 +118,19 @@ class ModelLinkage(Component):
         
         # tail 
         tail_length = 0.25
-        joint6 = Sphere(Point((0 , 0, -torso_length * 0.25)), shaderProg, [torso_radius, torso_radius/2, torso_radius], Ct.PURPLE)
+        joint6 = Sphere(Point((0 , 0, -torso_length * 0.25)), shaderProg, [torso_radius, torso_radius, tail_length/2], Ct.PURPLE)
         tail1 = Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius*5, torso_radius, tail_length], Ct.DARKORANGE4) 
         joint6.setDefaultAngle(-180, self.uAxis)
-        joint7 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius/2, torso_radius], Ct.PURPLE)
+        joint7 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius, tail_length/2], Ct.PURPLE)
         joint7.setDefaultAngle(0, self.uAxis)
         tail2 = Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius*4.5, torso_radius, tail_length], Ct.DARKORANGE4) 
-        joint8 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius/2, torso_radius], Ct.PURPLE)
+        joint8 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius, tail_length/2], Ct.PURPLE)
         joint8.setDefaultAngle(0, self.uAxis)
         tail3= Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius*4, torso_radius, tail_length], Ct.DARKORANGE4) 
-        joint9 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius/2, torso_radius], Ct.PURPLE)
+        joint9 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius, tail_length/2], Ct.PURPLE)
         joint9.setDefaultAngle(0, self.uAxis)
         tail4= Cylinder(Point((0, 0, tail_length)), shaderProg, [limb_radius*3.5, torso_radius, tail_length], Ct.DARKORANGE4) 
-        joint10 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius/2, torso_radius], Ct.PURPLE)
+        joint10 = Sphere(Point((0 , 0, tail_length)), shaderProg, [torso_radius, torso_radius, tail_length/2], Ct.PURPLE)
         joint10.setDefaultAngle(0, self.uAxis)
         tail5= Cone(Point((0, 0, tail_length)), shaderProg, [limb_radius*3.5, torso_radius, tail_length], Ct.DARKORANGE4) 
 
