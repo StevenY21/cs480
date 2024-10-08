@@ -107,6 +107,7 @@ class Sketch(CanvasBase):
     perspMat = None
 
     select_obj_index = -1 # index of selected component in self.components
+    select_obj_idx_list = [] # list of indexes for multiselect rotating
     select_axis_index = -1  # index of selected axis
     select_color = [ColorType.ColorType(1, 0, 0), ColorType.ColorType(0, 1, 0), ColorType.ColorType(0, 0, 1)]
 
@@ -253,8 +254,23 @@ class Sketch(CanvasBase):
         if wheelRotation == 0:
             return
         wheelChange = wheelRotation / abs(wheelRotation)  # normalize wheel change
-        if len(self.components) > 0 and self.select_obj_index >= 0:
+        # added last condition to ensure multi-selected joints still work together
+        if len(self.components) > 0 and self.select_obj_index >= 0 and self.select_obj_index not in self.select_obj_idx_list:
+            if self.components[self.select_obj_index] in [self.cDict["joint3"], self.cDict["joint4"], self.cDict["joint5"]] and self.select_axis_index == 2:
+                # for opposing limbs, the w-axis rotations are mirroed/opposite
+                wheelChange *= -1
+            else:
+                abs(wheelChange)
             self.components[self.select_obj_index].rotate(wheelChange * self.MOUSE_SCROLL_SPEED,
+                                                            self.components[self.select_obj_index].
+                                                            axisBucket[self.select_axis_index])
+        if len(self.select_obj_idx_list) > 0:
+            for i in self.select_obj_idx_list:
+                if self.components[i] in [self.cDict["joint3"], self.cDict["joint4"], self.cDict["joint5"]]:
+                    wheelChange *= -1
+                else:
+                    abs(wheelChange)
+                self.components[i].rotate(wheelChange * self.MOUSE_SCROLL_SPEED,
                                                             self.components[self.select_obj_index].
                                                             axisBucket[self.select_axis_index])
         self.update()
@@ -386,31 +402,59 @@ class Sketch(CanvasBase):
         # Create five unique poses to demonstrate your creature's joint rotations.
         # HINT: selecting individual components is easier if you create a dictionary of components (self.cDict)
         # that can be indexed by name (e.g. self.cDict["leg1"] instead of self.components[10])
-            
+        
         if keycode in [wx.WXK_RETURN]:
             # enter component editing mode
 
-            self.select_axis_index = 0
+            # self.select_axis_index = 0
 
             if len(self.components) > 0:
                 # reset color of last selected component
-                self.components[self.select_obj_index].reset("color")
+                if self.select_obj_index not in self.select_obj_idx_list: # to prevent interference with multi-select
+                    self.components[self.select_obj_index].reset("color")
                 # set new selected component & its color
+                # makes it so you can still go to an unselected joint
                 self.select_obj_index = (self.select_obj_index + 1) % len(self.components)
-                self.components[self.select_obj_index].setCurrentColor(self.select_color[self.select_axis_index])
+                if self.select_obj_index not in self.select_obj_idx_list:
+                    self.components[self.select_obj_index].setCurrentColor(self.select_color[self.select_axis_index])
                 
             self.update()
+        # custom dict to show what each key represents
+        cDict2 = {"a": "joint0", "s": "joint1", "d": "joint2", "f": "joint3", "g": "joint4", "h": "joint5",
+            "j": "joint6", "j": "joint7", "k": "joint8", "l": "joint9", "z": "joint10"
+            }
+        # custom multi-select keys
+        if chr(keycode) in cDict2:
+            key = chr(keycode)
+            selectedJoint = cDict2[key]
+            jIndex = self.components.index(self.cDict[selectedJoint]) # find index in joint list
+            self.select_axis_index = 0
+            if jIndex in self.select_obj_idx_list: # if already selected, deselect
+                self.components[jIndex].reset("color")
+                self.select_obj_idx_list.remove(jIndex)
+            else: 
+                if jIndex != self.select_obj_index: # check if already selected through enter key
+                    self.select_obj_idx_list.append(jIndex)
+                    self.cDict[selectedJoint].setCurrentColor(self.select_color[self.select_axis_index])
+            print(self.select_obj_idx_list)
+            
         if keycode in [wx.WXK_LEFT]:
             # Last rotation axis of this component
             self.select_axis_index = (self.select_axis_index - 1) % 3
             if self.select_obj_index >= 0:
                 self.components[self.select_obj_index].setCurrentColor(self.select_color[self.select_axis_index])
+            if len(self.select_obj_idx_list) > 0:
+                for i in self.select_obj_idx_list:
+                    self.components[i].setCurrentColor(self.select_color[self.select_axis_index])
             self.update()
         if keycode in [wx.WXK_RIGHT]:
             # Next rotation axis of this component
             self.select_axis_index = (self.select_axis_index + 1) % 3
             if self.select_obj_index >= 0:
                 self.components[self.select_obj_index].setCurrentColor(self.select_color[self.select_axis_index])
+            if len(self.select_obj_idx_list) > 0:
+                for i in self.select_obj_idx_list:
+                    self.components[i].setCurrentColor(self.select_color[self.select_axis_index])
             self.update()
         if keycode in [wx.WXK_UP]:
             # Increase rotation angle
@@ -425,6 +469,10 @@ class Sketch(CanvasBase):
             self.components[self.select_obj_index].reset("color")
             self.select_obj_index = -1
             self.select_axis_index = -1
+            if len(self.select_obj_idx_list) > 0:
+                for i in self.select_obj_idx_list:
+                    self.components[i].reset("color")
+            self.select_obj_idx_list = []
             self.update()
         if chr(keycode) in "r":
             # reset viewing angle only
@@ -436,6 +484,7 @@ class Sketch(CanvasBase):
             self.resetView()
             self.select_obj_index = -1
             self.select_axis_index = -1
+            self.select_obj_idx_list = []
             self.update()
 
 

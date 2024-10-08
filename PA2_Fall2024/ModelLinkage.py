@@ -101,17 +101,17 @@ class ModelLinkage(Component):
         # side 2/opposing side of side 1
         joint3 =  Sphere(Point(( -joint_radius *2 , 0, torso_length * 0.5)), shaderProg, [joint_radius, joint_radius, joint_radius], Ct.DARKORANGE3)
         limb41 = Cylinder(Point((0, 0, limb_length)), shaderProg, [limb_radius, limb_radius, limb_length* 0.75], Ct.DARKORANGE4)
-        joint3.setDefaultAngle(-45, self.wAxis)
+        joint3.setDefaultAngle(315, self.wAxis)
         joint3.setDefaultAngle(90, self.uAxis)
         
         joint4 =  Sphere(Point(( -joint_radius *2 , 0, torso_length * 0.5)), shaderProg, [joint_radius, joint_radius, joint_radius], Ct.DARKORANGE3)
         limb51 = Cylinder(Point((0, 0, limb_length)), shaderProg, [limb_radius, limb_radius, limb_length* 0.75], Ct.DARKORANGE4)
-        joint4.setDefaultAngle(-45, self.wAxis)
+        joint4.setDefaultAngle(315, self.wAxis)
         joint4.setDefaultAngle(90, self.uAxis)
 
         joint5 =  Sphere(Point(( -joint_radius *2 , 0, torso_length * 0.5)), shaderProg, [joint_radius, joint_radius, joint_radius], Ct.DARKORANGE3)
         limb61 = Cylinder(Point((0, 0, limb_length)), shaderProg, [limb_radius, limb_radius, limb_length* 0.75], Ct.DARKORANGE4)
-        joint5.setDefaultAngle(-45, self.wAxis)
+        joint5.setDefaultAngle(315, self.wAxis)
         joint5.setDefaultAngle(90, self.uAxis)    
         
         # tail 
@@ -185,12 +185,14 @@ class ModelLinkage(Component):
             "torso1": torso1, "torso2":torso2, "torso3": torso3,
             "head": head, "eye1": eye1, "eye2": eye2, "mouth1": mouth1, "mouth2": mouth2,
             "joint0": joint0, "limb11": limb11,
-            "joint2": joint1, "limb21": limb21, 
-            "joint4": joint2, "limb31": limb31, 
-            "joint6": joint3, "limb41": limb41, 
-            "joint8": joint4, "limb51": limb51, 
-            "joint10": joint5, "limb61": limb61, 
-            "joint12": joint6, "tail1": tail1, "joint13": joint7, "tail2": tail2, "joint14": joint8, "tail3": tail3, "joint15": joint9, "tail4": tail4
+            "joint1": joint1, "limb21": limb21, 
+            "joint2": joint2, "limb31": limb31, 
+            "joint3": joint3, "limb41": limb41, 
+            "joint4": joint4, "limb51": limb51, 
+            "joint5": joint5, "limb61": limb61, 
+            "joint6": joint6, "tail1": tail1, "joint7": joint7, "tail2": tail2, "joint8": joint8, "tail3": tail3, "joint9": joint9, "tail4": tail4,
+            "joint10": joint10, "torJoint1": torJoint1, "torJoint2": torJoint2
+
         }
         
         ##### TODO 4: Define creature's joint behavior
@@ -213,13 +215,13 @@ class ModelLinkage(Component):
         joint2.setRotateExtent(self.wAxis, 0, 180)
         joint3.setRotateExtent(self.uAxis, 45, 135)
         joint3.setRotateExtent(self.vAxis, joint3.default_vAngle, joint3.default_vAngle)
-        joint3.setRotateExtent(self.wAxis, -180, 0)
+        joint3.setRotateExtent(self.wAxis, 180, 360)
         joint4.setRotateExtent(self.uAxis, 45, 135)
         joint4.setRotateExtent(self.vAxis, joint4.default_vAngle, joint4.default_vAngle)
-        joint4.setRotateExtent(self.wAxis, -180, 0)
+        joint4.setRotateExtent(self.wAxis, 180, 360)
         joint5.setRotateExtent(self.uAxis, 45, 135)
         joint5.setRotateExtent(self.vAxis, joint5.default_vAngle, joint5.default_vAngle)
-        joint5.setRotateExtent(self.wAxis, -180, 0)
+        joint5.setRotateExtent(self.wAxis, 180, 360)
 
         # torso and other static components
         torso1.setRotateExtent(self.uAxis, torso1.default_uAngle, torso1.default_uAngle)
