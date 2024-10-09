@@ -440,7 +440,9 @@ class Sketch(CanvasBase):
                     self.select_obj_idx_list.append(jIndex)
                     self.cDict[selectedJoint].setCurrentColor(self.select_color[self.select_axis_index])
             #print(self.select_obj_idx_list)
+        # all poses reset the whole thing and do custom rotations
         # pose 1: flatten out snake
+        # rotates body joints and tail joints around y-axis and roates leg joints around z
         if chr(keycode) == "1":
             for c in self.components: # clear out everytime to avoid coloring problems
                 c.reset()
@@ -464,6 +466,7 @@ class Sketch(CanvasBase):
             self.cDict["bodyJoint1"].rotate(15, self.cDict["bodyJoint1"].axisBucket[1])
             self.cDict["bodyJoint2"].rotate(-15, self.cDict["bodyJoint2"].axisBucket[1])
         # pose 2: standard scorpion-like look
+        # rotates the tail to look like a scorpion's stinger
         if chr(keycode) == "2":
             for c in self.components:
                 c.reset()
@@ -477,6 +480,7 @@ class Sketch(CanvasBase):
             self.cDict["joint9"].rotate(45, self.cDict["joint3"].axisBucket[0])
             self.cDict["joint10"].rotate(45, self.cDict["joint4"].axisBucket[0])
         # pose 3: standing and waving pose
+        # rotates tail into scorpion stinger, rotates head, body and arms into a standing position and doing a little wave
         if chr(keycode) == "3":
             for c in self.components:
                 c.reset()
@@ -520,7 +524,8 @@ class Sketch(CanvasBase):
             self.cDict["joint8"].rotate(45, self.cDict["joint8"].axisBucket[0])
             self.cDict["joint9"].rotate(-45, self.cDict["joint9"].axisBucket[0])
             self.cDict["joint10"].rotate(-45, self.cDict["joint10"].axisBucket[0])
-        # pose shrimp like pose
+        # pose 5: shrimp like pose
+        # rotates the tail the opposite direction of pose 2, and moves arms closer together
         if chr(keycode) == '5':
             for c in self.components:
                 c.reset()

@@ -56,11 +56,11 @@ class ModelLinkage(Component):
         bodyJoint1 = Sphere(Point((0, 0, jointLen)), shaderProg, [bodyWid, bodyRad, jointLen/2], Ct.YELLOW)
         body2 = Cylinder(Point((0, 0, jointLen)), shaderProg, [bodyWid * 0.9, bodyRad * 0.9, jointLen], Ct.CYAN)
         bodyJoint2 = Sphere(Point((0, 0, jointLen)), shaderProg, [bodyWid * 0.8, bodyRad * 0.9, jointLen/2], Ct.YELLOW)
-        body3 = Cylinder(Point((0, 0, jointLen)), shaderProg, [bodyWid * 0.8, bodyRad * 0.8, jointLen], Ct.BLUE)
+        body3 = Cylinder(Point((0, 0, jointLen)), shaderProg, [bodyWid * 0.8, bodyRad * 0.8, jointLen], Ct.DODGERBLUE)
 
         # Head is a sphere
         headSize = 0.2
-        headJoint = Sphere(Point((0, 0, jointLen)), shaderProg, [bodyWid * 0.7, bodyRad * 0.8, jointLen/4], Ct.GREEN)
+        headJoint = Sphere(Point((0, 0, jointLen)), shaderProg, [bodyWid * 0.7, bodyRad * 0.8, jointLen/4], Ct.BLUEGREEN)
         head = Sphere(Point((0, 0, jointLen * 0.5)), shaderProg, [bodyWid , bodyRad, headSize], Ct.YELLOW)
         # mouth has 2 cones
         mouth_size = headSize/5
@@ -178,10 +178,9 @@ class ModelLinkage(Component):
         tail4.addChild(joint10)
         joint10.addChild(tail5)
 
-        # Store components in a dictionary for easier access
-        self.componentList = [bodyJoint1, bodyJoint2, headJoint, joint0, joint1, joint2, joint3, joint4, joint5, joint6, joint7, joint8, joint9, joint10
-                              
-                              ]
+        # Store moveable components in a list and all components in the dict
+        self.componentList = [bodyJoint1, bodyJoint2, headJoint, joint0, joint1, joint2, joint3, joint4, joint5, joint6, joint7, joint8, joint9, joint10]
+
         self.componentDict = {
             "body1": body1, "body2":body2, "body3": body3, "headJoint": headJoint,
             "head": head, "eye1": eye1, "eye2": eye2, "mouth1": mouth1, "mouth2": mouth2,
@@ -226,7 +225,7 @@ class ModelLinkage(Component):
         joint5.setRotateExtent(self.wAxis, 180, 360)
 
         # body and other static components
-        # set to not be able to be moved, this part is possibly redundant
+        # set to not be able to be moved, this part is possibly redundant but keeping in case
         body1.setRotateExtent(self.uAxis, body1.default_uAngle, body1.default_uAngle)
         body1.setRotateExtent(self.vAxis, body1.default_vAngle, body1.default_vAngle)
         body1.setRotateExtent(self.wAxis, body1.default_wAngle, body1.default_wAngle)
@@ -288,7 +287,7 @@ class ModelLinkage(Component):
         joint10.setRotateExtent(self.wAxis, joint10.default_wAngle, joint10.default_wAngle)
 
         # head
-        # the joint can rotate the entire z-axis, and move in x and y
+        # the joint can rotate all axis
         head.setRotateExtent(self.uAxis, head.default_uAngle, head.default_uAngle)
         head.setRotateExtent(self.vAxis, head.default_vAngle, head.default_vAngle)
         head.setRotateExtent(self.wAxis, head.default_wAngle, head.default_wAngle)  
