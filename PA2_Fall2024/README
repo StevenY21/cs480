@@ -24,3 +24,9 @@ S: joint10
 D: bodyJoint1
 F: bodyJoint2
 G: headJoint
+
+1: pose 1 
+2: pose 2
+3: pose 3
+4: pose 4
+5: pose 5

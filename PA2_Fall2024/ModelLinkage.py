@@ -207,22 +207,22 @@ class ModelLinkage(Component):
         # all these joints cannot rotate in the y axis, only in x and z
         joint0.setRotateExtent(self.uAxis, 45, 135)
         joint0.setRotateExtent(self.vAxis, joint0.default_vAngle, joint0.default_vAngle)
-        joint0.setRotateExtent(self.wAxis, 0, 180)
+        joint0.setRotateExtent(self.wAxis, 0, 120)
         joint1.setRotateExtent(self.uAxis, 45, 135)
         joint1.setRotateExtent(self.vAxis, joint1.default_vAngle, joint1.default_vAngle)
-        joint1.setRotateExtent(self.wAxis, 0, 180)
+        joint1.setRotateExtent(self.wAxis, 0, 120)
         joint2.setRotateExtent(self.uAxis, 45, 135)
         joint2.setRotateExtent(self.vAxis, joint2.default_vAngle, joint2.default_vAngle)
-        joint2.setRotateExtent(self.wAxis, 0, 180)
+        joint2.setRotateExtent(self.wAxis, 0, 120)
         joint3.setRotateExtent(self.uAxis, 45, 135)
         joint3.setRotateExtent(self.vAxis, joint3.default_vAngle, joint3.default_vAngle)
-        joint3.setRotateExtent(self.wAxis, 180, 360)
+        joint3.setRotateExtent(self.wAxis, 240, 360)
         joint4.setRotateExtent(self.uAxis, 45, 135)
         joint4.setRotateExtent(self.vAxis, joint4.default_vAngle, joint4.default_vAngle)
-        joint4.setRotateExtent(self.wAxis, 180, 360)
+        joint4.setRotateExtent(self.wAxis, 240, 360)
         joint5.setRotateExtent(self.uAxis, 45, 135)
         joint5.setRotateExtent(self.vAxis, joint5.default_vAngle, joint5.default_vAngle)
-        joint5.setRotateExtent(self.wAxis, 180, 360)
+        joint5.setRotateExtent(self.wAxis, 240, 360)
 
         # body and other static components
         # set to not be able to be moved, this part is possibly redundant but keeping in case
