@@ -58,25 +58,31 @@ class Linkage(Component, EnvironmentObject):
     A Linkage with animation enabled and is defined as an object in environment
     """
     components = None
+    moving_components = None
     rotation_speed = None
     translation_speed = None
 
     def __init__(self, parent, position, shaderProg):
         super(Linkage, self).__init__(position)
+        body = ModelBody(parent, Point((0, 0,0)), shaderProg)
         arm1 = ModelArm(parent, Point((0, 0, 0)), shaderProg, 0.1)
         arm2 = ModelArm(parent, Point((0, 0, 0)), shaderProg, 0.1)
-        arm2.setDefaultAngle(120, arm2.vAxis)
+        arm2.setDefaultAngle(90, arm2.vAxis)
         arm3 = ModelArm(parent, Point((0, 0, 0)), shaderProg, 0.1)
-        arm3.setDefaultAngle(240, arm3.vAxis)
+        arm3.setDefaultAngle(180, arm3.vAxis)
+        arm4 = ModelArm(parent, Point((0, 0, 0)), shaderProg, 0.1)
+        arm4.setDefaultAngle(270, arm4.vAxis)
 
-        self.components = arm1.components + arm2.components + arm3.components
+        self.components = body.components + arm1.components + arm2.components + arm3.components + arm4.components
+        self.moving_components = arm1.components + arm2.components + arm3.components + arm4.components
+        self.addChild(body)
         self.addChild(arm1)
         self.addChild(arm2)
         self.addChild(arm3)
+        self.addChild(arm4)
 
         self.rotation_speed = []
-        for comp in self.components:
-
+        for comp in self.moving_components:
             comp.setRotateExtent(comp.uAxis, 0, 35)
             comp.setRotateExtent(comp.vAxis, -45, 45)
             comp.setRotateExtent(comp.wAxis, -45, 45)
@@ -96,7 +102,7 @@ class Linkage(Component, EnvironmentObject):
         #   3. Your creatures should be able to move in 3 dimensions, not only on a plane.
 
         # create periodic animation for creature joints
-        for i, comp in enumerate(self.components):
+        for i, comp in enumerate(self.moving_components):
             comp.rotate(self.rotation_speed[i][0], comp.uAxis)
             comp.rotate(self.rotation_speed[i][1], comp.vAxis)
             comp.rotate(self.rotation_speed[i][2], comp.wAxis)
@@ -159,3 +165,35 @@ class ModelArm(Component):
         link3.addChild(link4)
 
         self.components = [link1, link2, link3, link4]
+class ModelBody(Component):
+    """
+    Linkage model for the main body, including antennae eyes
+    """
+
+    components = None
+    contextParent = None
+
+    def __init__(self, parent, position, shaderProg, linkageLength=0.1, display_obj=None):
+        super().__init__(position, display_obj)
+        self.components = []
+        self.contextParent = parent
+
+        torso = Sphere(Point((0, 0, 0)), shaderProg, [linkageLength, linkageLength, linkageLength], Ct.RED)
+        self.addChild(torso)
+        antenna_radius = linkageLength * 0.125
+        antenna_length = linkageLength * 0.66
+        # Left antenna
+        left_antenna_shaft = Cylinder(Point((antenna_radius*2, 0, linkageLength)), shaderProg, [antenna_radius, antenna_radius, antenna_length], Ct.GREEN)
+        left_antenna_tip = Sphere(Point((0, 0, antenna_length)), shaderProg, [antenna_radius * 1.2, antenna_radius * 1.2, antenna_radius * 1.2], Ct.GREENYELLOW)
+        torso.addChild(left_antenna_shaft)
+        left_antenna_shaft.addChild(left_antenna_tip)
+        # Right antenna
+        right_antenna_shaft = Cylinder(Point((-antenna_radius*2, 0, linkageLength)), shaderProg, [antenna_radius, antenna_radius, antenna_length], Ct.GREEN)
+        right_antenna_tip = Sphere(Point((0, 0, antenna_length)), shaderProg, [antenna_radius * 1.2, antenna_radius * 1.2, antenna_radius * 1.2], Ct.GREENYELLOW)
+        torso.addChild(right_antenna_shaft)
+        right_antenna_shaft.addChild(right_antenna_tip)
+
+        # Add components to the list
+        self.components = [torso, left_antenna_shaft, left_antenna_tip, right_antenna_shaft, right_antenna_tip]
+        left_antenna_shaft.setCurrentAngle(-90, self.uAxis)
+        right_antenna_shaft.setCurrentAngle(-90, self.uAxis)
