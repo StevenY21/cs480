@@ -261,6 +261,8 @@ class Prey(Component, EnvironmentObject):
     moving_components = None
     rotation_speed = None
     translation_speed = None
+    speed = None
+    direction = 1
 
     def __init__(self, parent, position, shaderProg):
         super(Prey, self).__init__(position)
@@ -280,10 +282,9 @@ class Prey(Component, EnvironmentObject):
         self.addChild(arm2)
         self.addChild(arm3)
         self.addChild(arm4)
-
         self.rotation_speed = []
         for comp in self.moving_components:
-            comp.setRotateExtent(comp.uAxis, 0, 35)
+            comp.setRotateExtent(comp.uAxis, 0, 30)
             comp.setRotateExtent(comp.vAxis, -45, 45)
             comp.setRotateExtent(comp.wAxis, -45, 45)
             self.rotation_speed.append([0.5, 0, 0])
@@ -338,8 +339,28 @@ class Prey(Component, EnvironmentObject):
         #           2. Collision between the same species: They should bounce apart from each other. You can use a
         #           reflection vector about a plane to decide the after-collision direction.
         #       3. You are welcome to use bounding spheres for collision detection.
+        # Assume the main position and translation are handled by the first component of `components`
+        main_component = components[1]  # Main component of the prey object
+        position = main_component.currentPos
+        u_max = tank_dimensions[0]/2
+        u_min = u_max * -1
+        v_max = tank_dimensions[1]/2
+        v_min = v_max * -1
+        w_max = tank_dimensions[2]/2
+        w_min = w_max * -1
+            # 1. Tank Boundary Collision Detection
+        # Check each axis and reverse direction if beyond boundaries
+        if position[0] - self.bound_radius < u_min or position[0] + self.bound_radius > u_max:
+            self.direction *= -1  # Reverse speed on u-axis
+        if position[1] - self.bound_radius < v_min or position[1] + self.bound_radius > v_max:
+            self.direction *= -1  # Reverse speed on v-axis
+        if position[2] - self.bound_radius < w_min or position[2] + self.bound_radius > w_max:
+            self.direction *= -1  # Reverse speed on w-axis
 
-        pass
+
+        # Update position by translation speed
+        new_position = position + (self.translation_speed * self.direction)
+        main_component.setCurrentPosition(new_position)
 
 class ModelArm(Component):
     """
