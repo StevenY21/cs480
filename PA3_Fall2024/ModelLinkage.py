@@ -54,7 +54,7 @@ except ImportError:
 #         4. You are welcome to reuse your PA2 creature in this assignment.
 class Predator(Component, EnvironmentObject):
     """
-    Scorpion Linkage Model from PA2, without the tail as it makes it too long if the size is too big
+    Scorpion Linkage Model from PA2, without the tail as it makes it too long if the size is too
     """
     components = None
     contextParent = None
@@ -312,7 +312,7 @@ class Prey(Component, EnvironmentObject):
                 self.rotation_speed[i][1] *= -1
             if comp.wAngle in comp.wRange:
                 self.rotation_speed[i][2] *= -1
-        self.vAngle = (self.vAngle + 3) % 360
+        #self.vAngle = (self.vAngle + 3) % 360
 
         ##### BONUS 6: Group behaviors
         # Requirements:
