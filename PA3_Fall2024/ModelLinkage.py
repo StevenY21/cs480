@@ -340,7 +340,10 @@ class Prey(Component, EnvironmentObject):
         #           reflection vector about a plane to decide the after-collision direction.
         #       3. You are welcome to use bounding spheres for collision detection.
         # Assume the main position and translation are handled by the first component of `components`
-        main_component = components[1]  # Main component of the prey object
+        for i, comp in enumerate(components):
+            if self == comp:
+                main_component = components[i]
+                break
         position = main_component.currentPos
         u_max = tank_dimensions[0]/2
         u_min = u_max * -1
@@ -356,7 +359,6 @@ class Prey(Component, EnvironmentObject):
             self.direction *= -1  # Reverse speed on v-axis
         if position[2] - self.bound_radius < w_min or position[2] + self.bound_radius > w_max:
             self.direction *= -1  # Reverse speed on w-axis
-
 
         # Update position by translation speed
         new_position = position + (self.translation_speed * self.direction)

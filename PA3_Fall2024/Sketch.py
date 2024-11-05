@@ -25,7 +25,8 @@ from GLBuffer import VAO, VBO, EBO, Texture
 from Vivarium import Vivarium
 from Quaternion import Quaternion
 import GLUtility
-
+from EnvironmentObject import EnvironmentObject
+from ModelLinkage import Prey, Predator
 
 try:
     import wx
