@@ -13,7 +13,7 @@ from Point import Point
 from Component import Component
 from ModelTank import Tank
 from EnvironmentObject import EnvironmentObject
-from ModelLinkage import Linkage
+from ModelLinkage import Prey, Predator
 
 
 class Vivarium(Component):
@@ -48,7 +48,9 @@ class Vivarium(Component):
         # Store all components in one list, for us to access them later
         self.components = [tank]
 
-        self.addNewObjInTank(Linkage(parent, Point((0,0,0)), shaderProg))
+        self.addNewObjInTank(Prey(parent, Point((0,0,0)), shaderProg))
+        self.addNewObjInTank(Prey(parent, Point((1,1,1)), shaderProg))
+        self.addNewObjInTank(Predator(parent, Point((-1,-1,-1)), shaderProg))
 
     def animationUpdate(self):
         """
