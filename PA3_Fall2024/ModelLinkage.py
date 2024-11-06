@@ -243,27 +243,11 @@ class Predator(Component, EnvironmentObject):
                 self.rotation_speed[i][2] *= -1
 
     def stepForward(self, components, tank_dimensions, vivarium):
-
-        ##### TODO 3: Interact with the environment
-        # Requirements:
-        #   1. Your creatures should always stay within the fixed size 3D "tank". You should do collision detection
-        #   between the creature and the tank walls. When it hits the tank walls, it should turn and change direction to stay
-        #   within the tank.
-        #   2. Your creatures should have a prey/predator relationship. For example, you could have a bug being chased
-        #   by a spider, or a fish eluding a shark. This means your creature should react to other creatures in the tank.
-        #       1. Use potential functions to change its direction based on other creatures’ location, their
-        #       inter-creature distances, and their current configuration.
-        #       2. You should detect collisions between creatures.
-        #           1. Predator-prey collision: The prey should disappear (get eaten) from the tank.
-        #           2. Collision between the same species: They should bounce apart from each other. You can use a
-        #           reflection vector about a plane to decide the after-collision direction.
-        #       3. You are welcome to use bounding spheres for collision detection.
-        
         for i, comp in enumerate(components):
             if self == comp:
                 main_component = components[i]
                 break
-        position = main_component.currentPos
+        pos = main_component.currentPos
         u_max = tank_dimensions[0]/2
         u_min = u_max * -1
         v_max = tank_dimensions[1]/2
@@ -272,16 +256,25 @@ class Predator(Component, EnvironmentObject):
         w_min = w_max * -1
             # 1. Tank Boundary Collision Detection
         # Check each axis and reverse direction if beyond boundaries
-        if position[0] - self.bound_radius < u_min or position[0] + self.bound_radius > u_max:
-            self.direction *= -1  # Reverse speed on u-axis
-        if position[1] - self.bound_radius < v_min or position[1] + self.bound_radius > v_max:
-            self.direction *= -1  # Reverse speed on v-axis
-        if position[2] - self.bound_radius < w_min or position[2] + self.bound_radius > w_max:
-            self.direction *= -1  # Reverse speed on w-axis
+        # currently just going to reverse direction
+        if pos[0] - self.bound_radius < u_min or pos[0] + self.bound_radius > u_max:
+            self.direction *= -1  
+        if pos[1] - self.bound_radius < v_min or pos[1] + self.bound_radius > v_max:
+            self.direction *= -1 
+        if pos[2] - self.bound_radius < w_min or pos[2] + self.bound_radius > w_max:
+            self.direction *= -1 
+        for i, comp in enumerate(components):
+            if comp is not self and i != 0 and comp.species_id != self.species_id:  # ignore self and the tank
+                other_pos = comp.currentPos
+                dist = pos.distance(other_pos)
+                if dist < self.bound_radius + comp.bound_radius:  # Bounding sphere collision
+                    # for now just change direction
+                    self.direction *= -1
+                    
 
         # Update position by translation speed
-        new_position = position + (self.translation_speed * self.direction)
-        main_component.setCurrentPosition(new_position)
+        new_pos = pos + (self.translation_speed * self.direction)
+        main_component.setCurrentPosition(new_pos)
 class Prey(Component, EnvironmentObject):
     """
     Prey model with animation
