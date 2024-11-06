@@ -264,7 +264,7 @@ class Predator(Component, EnvironmentObject):
         if pos[2] - self.bound_radius < w_min or pos[2] + self.bound_radius > w_max:
             self.direction *= -1 
         for i, comp in enumerate(components):
-            if comp is not self and i != 0 and comp.species_id != self.species_id:  # ignore self and the tank
+            if comp is not self and i != 0 and comp.species_id == self.species_id:  # ignore self and the tank
                 other_pos = comp.currentPos
                 dist = pos.distance(other_pos)
                 if dist < self.bound_radius + comp.bound_radius:  # Bounding sphere collision
