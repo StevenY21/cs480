@@ -258,11 +258,11 @@ class Predator(Component, EnvironmentObject):
         # Check each axis and reverse direction if beyond boundaries
         # currently just going to reverse direction
         if pos[0] - self.bound_radius < u_min or pos[0] + self.bound_radius > u_max:
-            self.direction *= -1  
+            self.translation_speed = self.translation_speed.reflect(Point([1, 0, 0]))
         if pos[1] - self.bound_radius < v_min or pos[1] + self.bound_radius > v_max:
-            self.direction *= -1 
+            self.translation_speed = self.translation_speed.reflect(Point([0, 1, 0])) 
         if pos[2] - self.bound_radius < w_min or pos[2] + self.bound_radius > w_max:
-            self.direction *= -1 
+            self.translation_speed = self.translation_speed.reflect(Point([0, 0, 1]))
         for i, comp in enumerate(components):
             if comp is not self and i != 0 and comp.species_id == self.species_id:  # ignore self and the tank
                 other_pos = comp.currentPos
@@ -375,13 +375,13 @@ class Prey(Component, EnvironmentObject):
         w_min = w_max * -1
             # 1. Tank Boundary Collision Detection
         # Check each axis and reverse direction if beyond boundaries
-        # currently just going to reverse direction
+        # reflects based on what axis limit it reached
         if pos[0] - self.bound_radius < u_min or pos[0] + self.bound_radius > u_max:
-            self.direction *= -1  
+            self.translation_speed = self.translation_speed.reflect(Point([1, 0, 0]))
         if pos[1] - self.bound_radius < v_min or pos[1] + self.bound_radius > v_max:
-            self.direction *= -1 
+            self.translation_speed = self.translation_speed.reflect(Point([0, 1, 0])) 
         if pos[2] - self.bound_radius < w_min or pos[2] + self.bound_radius > w_max:
-            self.direction *= -1 
+            self.translation_speed = self.translation_speed.reflect(Point([0, 0, 1]))
         for i, comp in enumerate(components):
             if comp is not self and i != 0:  # ignore self and the tank
                 other_pos = comp.currentPos
