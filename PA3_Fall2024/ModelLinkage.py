@@ -373,7 +373,7 @@ class Prey(Component, EnvironmentObject):
             if self == comp:
                 main_component = components[i]
                 break
-        position = main_component.currentPos
+        pos = main_component.currentPos
         u_max = tank_dimensions[0]/2
         u_min = u_max * -1
         v_max = tank_dimensions[1]/2
@@ -382,16 +382,25 @@ class Prey(Component, EnvironmentObject):
         w_min = w_max * -1
             # 1. Tank Boundary Collision Detection
         # Check each axis and reverse direction if beyond boundaries
-        if position[0] - self.bound_radius < u_min or position[0] + self.bound_radius > u_max:
-            self.direction *= -1  # Reverse speed on u-axis
-        if position[1] - self.bound_radius < v_min or position[1] + self.bound_radius > v_max:
-            self.direction *= -1  # Reverse speed on v-axis
-        if position[2] - self.bound_radius < w_min or position[2] + self.bound_radius > w_max:
-            self.direction *= -1  # Reverse speed on w-axis
+        # currently just going to reverse direction
+        if pos[0] - self.bound_radius < u_min or pos[0] + self.bound_radius > u_max:
+            self.direction *= -1  
+        if pos[1] - self.bound_radius < v_min or pos[1] + self.bound_radius > v_max:
+            self.direction *= -1 
+        if pos[2] - self.bound_radius < w_min or pos[2] + self.bound_radius > w_max:
+            self.direction *= -1 
+        for i, comp in enumerate(components):
+            if comp is not self and i != 0:  # ignore self and the tank
+                other_pos = comp.currentPos
+                dist = pos.distance(other_pos)
+                if dist < self.bound_radius + comp.bound_radius:  # Bounding sphere collision
+                    # for now just change direction
+                    self.direction *= -1
+                    
 
         # Update position by translation speed
-        new_position = position + (self.translation_speed * self.direction)
-        main_component.setCurrentPosition(new_position)
+        new_pos = pos + (self.translation_speed * self.direction)
+        main_component.setCurrentPosition(new_pos)
 
 class ModelArm(Component):
     """
