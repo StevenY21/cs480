@@ -54,17 +54,19 @@ except ImportError:
 #         4. You are welcome to reuse your PA2 creature in this assignment.
 class Predator(Component, EnvironmentObject):
     """
-    Scorpion Linkage Model from PA2, without the tail as it makes it too long if the size is too
+    
     """
     components = None
     contextParent = None
+    componentDict = None
+    leg_components = None
+    rotation_speed = []
+    translation_speed = None
+    speed = None
+    direction = 1
 
     def __init__(self, parent, position, shaderProg, display_obj=None):
-        super().__init__(position, display_obj)
-        self.contextParent = parent
-        # note: a few of these variables are not used exactly as specified, due to me constantly modifying each individual component
-        # they are the standard for some parts, but not the standard for other parts
-        # assume joints are sphere
+        super(Predator, self).__init__(position)
         jointRad = 0.1 * 0.6
         jointLen = 0.25 * 0.6
         # body parts are Cylinders
@@ -74,16 +76,12 @@ class Predator(Component, EnvironmentObject):
         # body parts and joints get smaller and smaller the closer it gets to the head
         body1 = Cylinder(Point((0, 0, 0)), shaderProg, [bodyWid, bodyRad, jointLen], Ct.SOFTBLUE)
         bodyJoint1 = Sphere(Point((0, 0, jointLen)), shaderProg, [bodyWid, bodyRad, jointLen/2], Ct.YELLOW)
-        body2 = Cylinder(Point((0, 0, jointLen)), shaderProg, [bodyWid * 0.9, bodyRad * 0.9, jointLen], Ct.CYAN)
-        bodyJoint2 = Sphere(Point((0, 0, jointLen)), shaderProg, [bodyWid * 0.8, bodyRad * 0.9, jointLen/2], Ct.YELLOW)
-        body3 = Cylinder(Point((0, 0, jointLen)), shaderProg, [bodyWid * 0.8, bodyRad * 0.8, jointLen], Ct.DODGERBLUE)
-
-        # Head is a sphere
+                # Head is a sphere
         headSize = 0.2 * 0.6
         headJoint = Sphere(Point((0, 0, jointLen)), shaderProg, [bodyWid * 0.7, bodyRad * 0.8, jointLen/4], Ct.BLUEGREEN)
         head = Sphere(Point((0, 0, jointLen * 0.5)), shaderProg, [bodyWid , bodyRad, headSize], Ct.YELLOW)
         # mouth has 2 cones
-        mouth_size = headSize/5 * 0.6
+        mouth_size = headSize/5
         mouth1 = Cone(Point((bodyRad, 0, headSize)), shaderProg, [mouth_size, mouth_size, mouth_size], Ct.GRAY)
         mouth2 = Cone(Point((-bodyRad, 0, headSize)), shaderProg, [mouth_size, mouth_size, mouth_size], Ct.GRAY)
 
@@ -91,53 +89,51 @@ class Predator(Component, EnvironmentObject):
         eyeSize = 0.02 * 0.6
         eye1 = Cube(Point((eyeSize*2, bodyRad * 0.75, headSize * 0.5)), shaderProg, [eyeSize, eyeSize, eyeSize], Ct.GRAY)
         eye2 = Cube(Point((eyeSize*-2, bodyRad * 0.75, headSize * 0.5)), shaderProg, [eyeSize, eyeSize, eyeSize], Ct.GRAY)
-
+        self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.01
         # assume limbs are cylinder
         limbLen = 0.2 * 0.6
         limbRad = 0.05 * 0.6
         # Rememebr: default plane has x being uAxis, y being vAxis, and z being wAxis
         # limbxy, where x represents the limb number, and y represents upper(1) or lower(0) part of the limb
-
         # side 1
-        joint0 =  Sphere(Point(( jointRad *2 , 0, bodyLen * 0.5)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
+        joint0 =  Sphere(Point(( jointRad *2 , 0, bodyLen * 0.125)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
         limb11 = Cylinder(Point((0, 0, limbLen)), shaderProg, [limbRad, limbRad, limbLen* 0.75], Ct.DARKORANGE4)
         joint0.setDefaultAngle(45, self.wAxis)
         joint0.setDefaultAngle(90, self.uAxis)
+        self.rotation_speed.append([0.5, 0, 0])
 
-        joint1 =  Sphere(Point(( jointRad *2 , 0, bodyLen * 0.5)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
+        joint1 =  Sphere(Point(( jointRad *2 , 0, bodyLen * 0.875)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
         limb21 = Cylinder(Point((0, 0, limbLen)), shaderProg, [limbRad, limbRad, limbLen* 0.75], Ct.DARKORANGE4)
         joint1.setDefaultAngle(45, self.wAxis)
         joint1.setDefaultAngle(90, self.uAxis)
-
-        joint2 =  Sphere(Point(( jointRad *2 , 0, bodyLen * 0.5)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
-        limb31 = Cylinder(Point((0, 0, limbLen)), shaderProg, [limbRad, limbRad, limbLen* 0.75], Ct.DARKORANGE4)
-        joint2.setDefaultAngle(45, self.wAxis)
-        joint2.setDefaultAngle(90, self.uAxis)
-
+        self.rotation_speed.append([0.5, 0, 0])
         # side 2/opposing side of side 1, which puts on the other side/ negative x side
-        joint3 =  Sphere(Point(( -jointRad *2 , 0, bodyLen * 0.5)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
+        joint3 =  Sphere(Point(( -jointRad *2 , 0, bodyLen * 0.125)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
         limb41 = Cylinder(Point((0, 0, limbLen)), shaderProg, [limbRad, limbRad, limbLen* 0.75], Ct.DARKORANGE4)
         joint3.setDefaultAngle(315, self.wAxis)
         joint3.setDefaultAngle(90, self.uAxis)
+        self.rotation_speed.append([0.5, 0, 0])
         
-        joint4 =  Sphere(Point(( -jointRad *2 , 0, bodyLen * 0.5)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
+        joint4 =  Sphere(Point(( -jointRad *2 , 0, bodyLen * 0.875)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
         limb51 = Cylinder(Point((0, 0, limbLen)), shaderProg, [limbRad, limbRad, limbLen* 0.75], Ct.DARKORANGE4)
         joint4.setDefaultAngle(315, self.wAxis)
         joint4.setDefaultAngle(90, self.uAxis)
+        self.rotation_speed.append([0.5, 0, 0])
+        tailLen = 0.25 * 0.6
+        # joint 6 is a little different due to being attached to the initial body, and will have a "reflected" angle range
+        joint6 = Sphere(Point((0 , 0, -bodyLen * 0.25)), shaderProg, [bodyWid, bodyRad, tailLen/2], Ct.PURPLE)
+        tail1 = Cylinder(Point((0, 0, tailLen)), shaderProg, [limbRad*5, bodyRad, tailLen], Ct.DARKORANGE1) 
+        joint6.setDefaultAngle(-180, self.uAxis)
+        joint10 = Sphere(Point((0 , 0, tailLen)), shaderProg, [bodyRad, bodyRad, tailLen/2], Ct.PURPLE)
+        joint10.setDefaultAngle(0, self.uAxis)
+        tail5= Cone(Point((0, 0, tailLen)), shaderProg, [limbRad*3.5, bodyRad, tailLen], Ct.BLACK) 
 
-        joint5 =  Sphere(Point(( -jointRad *2 , 0, bodyLen * 0.5)), shaderProg, [jointRad, jointRad, jointRad], Ct.DARKORANGE3)
-        limb61 = Cylinder(Point((0, 0, limbLen)), shaderProg, [limbRad, limbRad, limbLen* 0.75], Ct.DARKORANGE4)
-        joint5.setDefaultAngle(315, self.wAxis)
-        joint5.setDefaultAngle(90, self.uAxis)    
-        
+        self.bound_center = Point((0, 0, 0))
+        self.bound_radius = 0.5
+        self.species_id = 1
         # attach head and body parts
         self.addChild(body1)
-        body1.addChild(body2)
-        body1.addChild(bodyJoint1)
-        bodyJoint1.addChild(body2)
-        body2.addChild(bodyJoint2)
-        bodyJoint2.addChild(body3)
-        body3.addChild(headJoint)
+        body1.addChild(headJoint)
         
         headJoint.addChild(head)
         head.addChild(eye1)
@@ -146,66 +142,58 @@ class Predator(Component, EnvironmentObject):
         head.addChild(mouth2)
 
         # attaching regular limbs
-        body3.addChild(joint0)
+        body1.addChild(joint0)
         joint0.addChild(limb11)
 
-        body2.addChild(joint1)
+        body1.addChild(joint1)
         joint1.addChild(limb21)
-        
-        body1.addChild(joint2)
-        joint2.addChild(limb31)
-
-        body3.addChild(joint3)
+        body1.addChild(joint3)
         joint3.addChild(limb41)
 
-        body2.addChild(joint4)
+        body1.addChild(joint4)
         joint4.addChild(limb51)
+        # attaching tail
+        body1.addChild(joint6)
+        joint6.addChild(tail1)
+        tail1.addChild(joint10)
+        joint10.addChild(tail5)
 
-        body1.addChild(joint5)
-        joint5.addChild(limb61)
         # Store moveable components in a list and all components in the dict
-        self.componentList = [bodyJoint1, bodyJoint2, headJoint, joint0, joint1, joint2, joint3, joint4, joint5]
+        self.componentList = [bodyJoint1, headJoint, joint0, joint1, joint3, joint4, joint6, joint10]
 
         self.componentDict = {
-            "body1": body1, "body2":body2, "body3": body3, "headJoint": headJoint,
+            "body1": body1, "headJoint": headJoint,
             "head": head, "eye1": eye1, "eye2": eye2, "mouth1": mouth1, "mouth2": mouth2,
             "joint0": joint0, "limb11": limb11,
             "joint1": joint1, "limb21": limb21, 
-            "joint2": joint2, "limb31": limb31, 
             "joint3": joint3, "limb41": limb41, 
             "joint4": joint4, "limb51": limb51, 
-            "joint5": joint5, "limb61": limb61, 
+            "joint6": joint6, "tail1": tail1,
+            "joint10": joint10, "bodyJoint1": bodyJoint1
+
         }
+        self.leg_components = [joint0, joint1, joint3, joint4]
         joint0.setRotateExtent(self.uAxis, 45, 135)
         joint0.setRotateExtent(self.vAxis, joint0.default_vAngle, joint0.default_vAngle)
         joint0.setRotateExtent(self.wAxis, 0, 120)
         joint1.setRotateExtent(self.uAxis, 45, 135)
         joint1.setRotateExtent(self.vAxis, joint1.default_vAngle, joint1.default_vAngle)
         joint1.setRotateExtent(self.wAxis, 0, 120)
-        joint2.setRotateExtent(self.uAxis, 45, 135)
-        joint2.setRotateExtent(self.vAxis, joint2.default_vAngle, joint2.default_vAngle)
-        joint2.setRotateExtent(self.wAxis, 0, 120)
         joint3.setRotateExtent(self.uAxis, 45, 135)
         joint3.setRotateExtent(self.vAxis, joint3.default_vAngle, joint3.default_vAngle)
         joint3.setRotateExtent(self.wAxis, 240, 360)
         joint4.setRotateExtent(self.uAxis, 45, 135)
         joint4.setRotateExtent(self.vAxis, joint4.default_vAngle, joint4.default_vAngle)
         joint4.setRotateExtent(self.wAxis, 240, 360)
-        joint5.setRotateExtent(self.uAxis, 45, 135)
-        joint5.setRotateExtent(self.vAxis, joint5.default_vAngle, joint5.default_vAngle)
-        joint5.setRotateExtent(self.wAxis, 240, 360)
 
         # body and other static components
         # set to not be able to be moved, this part is possibly redundant but keeping in case
         body1.setRotateExtent(self.uAxis, body1.default_uAngle, body1.default_uAngle)
         body1.setRotateExtent(self.vAxis, body1.default_vAngle, body1.default_vAngle)
         body1.setRotateExtent(self.wAxis, body1.default_wAngle, body1.default_wAngle)
-        body2.setRotateExtent(self.uAxis, body2.default_uAngle, body2.default_uAngle)
-        body2.setRotateExtent(self.vAxis, body2.default_vAngle, body2.default_vAngle)
-        body2.setRotateExtent(self.wAxis, body2.default_wAngle, body2.default_wAngle)
-        body3.setRotateExtent(self.uAxis, body3.default_uAngle, body3.default_uAngle)
-        body3.setRotateExtent(self.vAxis, body3.default_vAngle, body3.default_vAngle)
-        body3.setRotateExtent(self.wAxis, body3.default_wAngle, body3.default_wAngle)
+        tail1.setRotateExtent(self.uAxis, tail1.default_uAngle, tail1.default_uAngle)
+        tail1.setRotateExtent(self.vAxis, tail1.default_vAngle, tail1.default_vAngle)
+        tail1.setRotateExtent(self.wAxis, tail1.default_wAngle, tail1.default_wAngle)     
         eye1.setRotateExtent(self.uAxis, eye1.default_uAngle, eye1.default_uAngle)
         eye1.setRotateExtent(self.vAxis, eye1.default_vAngle, eye1.default_vAngle)
         eye1.setRotateExtent(self.wAxis, eye1.default_wAngle, eye1.default_wAngle)  
@@ -223,9 +211,15 @@ class Predator(Component, EnvironmentObject):
         bodyJoint1.setRotateExtent(self.uAxis, -30, 30)
         bodyJoint1.setRotateExtent(self.vAxis, -15, 15)
         bodyJoint1.setRotateExtent(self.wAxis, bodyJoint1.default_wAngle, bodyJoint1.default_wAngle)
-        bodyJoint2.setRotateExtent(self.uAxis, -30, 30)
-        bodyJoint2.setRotateExtent(self.vAxis,-15, 15)
-        bodyJoint2.setRotateExtent(self.wAxis, bodyJoint2.default_wAngle, bodyJoint2.default_wAngle)
+
+        # tail joints, 6-10
+        # all tail joints can move along x and y but not z
+        joint6.setRotateExtent(self.uAxis, -225, -135)
+        joint6.setRotateExtent(self.vAxis, -15, 15)
+        joint6.setRotateExtent(self.wAxis, joint6.default_wAngle, joint6.default_wAngle)
+        joint10.setRotateExtent(self.uAxis, -45, 45)
+        joint10.setRotateExtent(self.vAxis, -15, 15)
+        joint10.setRotateExtent(self.wAxis, joint10.default_wAngle, joint10.default_wAngle)
 
         # head
         # the joint can rotate all axis
@@ -235,6 +229,19 @@ class Predator(Component, EnvironmentObject):
         headJoint.setRotateExtent(self.uAxis, -45, 45)
         headJoint.setRotateExtent(self.wAxis, 15, -15)
         headJoint.setRotateExtent(self.vAxis, -15, 15)
+    def animationUpdate(self):
+
+        for i, comp in enumerate(self.leg_components):
+            comp.rotate(self.rotation_speed[i][0], comp.uAxis)
+            #comp.rotate(self.rotation_speed[i][1], comp.vAxis)
+            #comp.rotate(self.rotation_speed[i][2], comp.wAxis)
+            if comp.uAngle in comp.uRange:  # rotation reached the limit
+                self.rotation_speed[i][0] *= -1
+            if comp.vAngle in comp.vRange:
+                self.rotation_speed[i][1] *= -1
+            if comp.wAngle in comp.wRange:
+                self.rotation_speed[i][2] *= -1
+
     def stepForward(self, components, tank_dimensions, vivarium):
 
         ##### TODO 3: Interact with the environment
@@ -251,8 +258,30 @@ class Predator(Component, EnvironmentObject):
         #           2. Collision between the same species: They should bounce apart from each other. You can use a
         #           reflection vector about a plane to decide the after-collision direction.
         #       3. You are welcome to use bounding spheres for collision detection.
+        
+        for i, comp in enumerate(components):
+            if self == comp:
+                main_component = components[i]
+                break
+        position = main_component.currentPos
+        u_max = tank_dimensions[0]/2
+        u_min = u_max * -1
+        v_max = tank_dimensions[1]/2
+        v_min = v_max * -1
+        w_max = tank_dimensions[2]/2
+        w_min = w_max * -1
+            # 1. Tank Boundary Collision Detection
+        # Check each axis and reverse direction if beyond boundaries
+        if position[0] - self.bound_radius < u_min or position[0] + self.bound_radius > u_max:
+            self.direction *= -1  # Reverse speed on u-axis
+        if position[1] - self.bound_radius < v_min or position[1] + self.bound_radius > v_max:
+            self.direction *= -1  # Reverse speed on v-axis
+        if position[2] - self.bound_radius < w_min or position[2] + self.bound_radius > w_max:
+            self.direction *= -1  # Reverse speed on w-axis
 
-        pass
+        # Update position by translation speed
+        new_position = position + (self.translation_speed * self.direction)
+        main_component.setCurrentPosition(new_position)
 class Prey(Component, EnvironmentObject):
     """
     Prey model with animation
@@ -292,7 +321,7 @@ class Prey(Component, EnvironmentObject):
         self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.01
 
         self.bound_center = Point((0, 0, 0))
-        self.bound_radius = 0.1 * 4
+        self.bound_radius = 0.3
         self.species_id = 1
 
     def animationUpdate(self):

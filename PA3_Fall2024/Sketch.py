@@ -378,12 +378,33 @@ class Sketch(CanvasBase):
         if chr(keycode) in "rR":
             # reset viewing angle
             self.viewing_quaternion = Quaternion()
+            # delete tank components
+            for c in self.components[1:]:
+                self.vivarium.delObjInTank(c)
+            prey1 = Prey(self.vivarium.parent, Point((0,0,0)), self.vivarium.shaderProg)
+            prey1.initialize()
+            prey2 = Prey(self.vivarium.parent, Point((-1,-1,-1)), self.vivarium.shaderProg)
+            prey2.initialize()
+            self.vivarium.addNewObjInTank(prey1)
+            self.vivarium.addNewObjInTank(prey2)
+            pred1 = Predator(self.vivarium.parent, Point((1,1,1)), self.vivarium.shaderProg)
+            pred1.initialize()
+            self.vivarium.addNewObjInTank(pred1)
             self.update()
         
         # A test scene with only one (1) predator and one (1) prey
         if chr(keycode) in "tT":
             # reset viewing angle
             self.viewing_quaternion = Quaternion()
+            # delete tank components
+            for c in self.components[1:]:
+                self.vivarium.delObjInTank(c)
+            prey1 = Prey(self.vivarium.parent, Point((0,0,0)), self.vivarium.shaderProg)
+            prey1.initialize()
+            self.vivarium.addNewObjInTank(prey1)
+            pred1 = Predator(self.vivarium.parent, Point((1,1,1)), self.vivarium.shaderProg)
+            pred1.initialize()
+            self.vivarium.addNewObjInTank(pred1)
             self.update()
 
 
