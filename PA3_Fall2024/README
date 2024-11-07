@@ -5,6 +5,7 @@ Collaborators: None
 
 Summary: Made a predator model based on my previous assignment model, and a prey model based on a jellyfish. The models have movable legs,
 with the predator model having movable body joints. If a predator gets within the bounding box of a prey, the prey will disappear from the tank. 
-The creatures will "bounce" off each other if collision with bounding boxes/spheres occur. relationship
+The creatures will "bounce" off each other if collision with bounding boxes/spheres occur. 
+The creatures direction orientation changes based on movement direction, but that needs some fixing.
 Known Error(s):
 Unbound error for prey after predator kills prey.
