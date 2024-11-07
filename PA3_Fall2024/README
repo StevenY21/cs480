@@ -4,4 +4,7 @@ U38800489
 Collaborators: None
 
 Summary: Made a predator model based on my previous assignment model, and a prey model based on a jellyfish. The models have movable legs,
-with the predator model having movable body joints. As of right now, no predator-prey relationship exists and the models don't face the direction they move, but have basic collision detection.
+with the predator model having movable body joints. If a predator gets within the bounding box of a prey, the prey will disappear from the tank. 
+The creatures will "bounce" off each other if collision with bounding boxes/spheres occur. relationship
+Known Error(s):
+Unbound error for prey after predator kills prey.

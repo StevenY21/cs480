@@ -89,7 +89,7 @@ class Predator(Component, EnvironmentObject):
         eyeSize = 0.02 * 0.6
         eye1 = Cube(Point((eyeSize*2, bodyRad * 0.75, headSize * 0.5)), shaderProg, [eyeSize, eyeSize, eyeSize], Ct.GRAY)
         eye2 = Cube(Point((eyeSize*-2, bodyRad * 0.75, headSize * 0.5)), shaderProg, [eyeSize, eyeSize, eyeSize], Ct.GRAY)
-        self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.01
+        self.translation_speed = Point([random.random()-0.5 for _ in range(3)]).normalize() * 0.05
         # assume limbs are cylinder
         limbLen = 0.2 * 0.6
         limbRad = 0.05 * 0.6
@@ -264,13 +264,16 @@ class Predator(Component, EnvironmentObject):
         if pos[2] - self.bound_radius < w_min or pos[2] + self.bound_radius > w_max:
             self.translation_speed = self.translation_speed.reflect(Point([0, 0, 1]))
         for i, comp in enumerate(components):
-            if comp is not self and i != 0 and comp.species_id == self.species_id:  # ignore self and the tank
+            if comp is not self and i != 0:  # ignore self and the tank
                 other_pos = comp.currentPos
                 dist = pos.distance(other_pos)
                 if dist < self.bound_radius + comp.bound_radius:  # Bounding sphere collision
-                    # for now just change direction
-                    self.direction *= -1
-                    
+                    if comp.species_id == 0: # prey
+                        components[0].children.remove(comp)
+                        components.remove(comp)
+                    else:
+                        self.translation_speed.reflect(Point([1,1,1]))
+            
 
         # Update position by translation speed
         new_pos = pos + (self.translation_speed * self.direction)
@@ -284,7 +287,7 @@ class Prey(Component, EnvironmentObject):
     rotation_speed = None
     translation_speed = None
     speed = None
-    direction = 1
+    direction = [0,0,1]
 
     def __init__(self, parent, position, shaderProg):
         super(Prey, self).__init__(position)
@@ -315,7 +318,7 @@ class Prey(Component, EnvironmentObject):
 
         self.bound_center = Point((0, 0, 0))
         self.bound_radius = 0.3
-        self.species_id = 1
+        self.species_id = 0
 
     def animationUpdate(self):
         ##### TODO 2: Animate your creature!
@@ -388,11 +391,11 @@ class Prey(Component, EnvironmentObject):
                 dist = pos.distance(other_pos)
                 if dist < self.bound_radius + comp.bound_radius:  # Bounding sphere collision
                     # for now just change direction
-                    self.direction *= -1
+                    self.translation_speed.reflect(Point([1,1,1]))
                     
 
         # Update position by translation speed
-        new_pos = pos + (self.translation_speed * self.direction)
+        new_pos = pos + (self.translation_speed)
         main_component.setCurrentPosition(new_pos)
 
 class ModelArm(Component):
