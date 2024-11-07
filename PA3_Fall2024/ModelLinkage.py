@@ -9,9 +9,12 @@ Modified by Daniel Scrivener 08/2022
 """
 import random
 
+import numpy
+
 from Component import Component
 from Shapes import Cone, Cube, Cylinder, Sphere
 from Point import Point
+from Quaternion import Quaternion
 import ColorType as Ct
 from EnvironmentObject import EnvironmentObject
 
@@ -287,7 +290,7 @@ class Prey(Component, EnvironmentObject):
     rotation_speed = None
     translation_speed = None
     speed = None
-    direction = [0,0,1]
+    direction = Point([0,0,1])
 
     def __init__(self, parent, position, shaderProg):
         super(Prey, self).__init__(position)
@@ -392,8 +395,15 @@ class Prey(Component, EnvironmentObject):
                 if dist < self.bound_radius + comp.bound_radius:  # Bounding sphere collision
                     # for now just change direction
                     self.translation_speed.reflect(Point([1,1,1]))
-                    
-
+        
+        # finding the quaternion needed to get to new target direction
+        target_direction = self.translation_speed.normalize()
+        # u in the quaternion
+        norm_cross_prod = self.direction.cross3d(target_direction).normalize()
+        dot_prod = self.direction.dot(target_direction)
+        angle = numpy.arccos(dot_prod)
+        new_quat = Quaternion(numpy.cos(angle/2), norm_cross_prod[0] * numpy.sin(angle/2), norm_cross_prod[1] * numpy.sin(angle/2), norm_cross_prod[2] * numpy.sin(angle/2))
+        main_component.setQuaternion(new_quat)
         # Update position by translation speed
         new_pos = pos + (self.translation_speed)
         main_component.setCurrentPosition(new_pos)
