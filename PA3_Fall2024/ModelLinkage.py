@@ -221,7 +221,7 @@ class Predator(Component, EnvironmentObject):
                 self.rotation_speed[i][1] *= -1
             if comp.wAngle in comp.wRange:
                 self.rotation_speed[i][2] *= -1
-
+        self.update()
     def stepForward(self, components, tank_dimensions, vivarium):
         for i, comp in enumerate(components):
             if self == comp:
@@ -238,12 +238,18 @@ class Predator(Component, EnvironmentObject):
             # 1. Tank Boundary Collision Detection
         # Check each axis and reverse direction if beyond boundaries
         # reflects based on what axis limit it reached
-        if u - self.bound_radius < u_min or u + self.bound_radius > u_max:
+        if u - self.bound_radius < u_min :
             self.translation_speed = self.translation_speed.reflect(Point([1, 0, 0]))
-        if v - self.bound_radius < v_min or v + self.bound_radius > v_max:
+        if u + self.bound_radius > u_max:
+            self.translation_speed = self.translation_speed.reflect(Point([-1, 0, 0]))
+        if v - self.bound_radius < v_min:
             self.translation_speed = self.translation_speed.reflect(Point([0, 1, 0])) 
-        if w - self.bound_radius < w_min or w + self.bound_radius > w_max:
+        if v + self.bound_radius > v_max:
+            self.translation_speed = self.translation_speed.reflect(Point([0, -1, 0])) 
+        if w - self.bound_radius < w_min:
             self.translation_speed = self.translation_speed.reflect(Point([0, 0, 1]))
+        if w + self.bound_radius > w_max:
+            self.translation_speed = self.translation_speed.reflect(Point([0, 0, -1]))
         for i in range(len(components)):
             if components[i] is not self and i != 0:  # ignore self and the tank
                 other_pos = components[i].currentPos
@@ -255,6 +261,7 @@ class Predator(Component, EnvironmentObject):
                         self.translation_speed.reflect(Point([1,1,1]))
             
         # finding the quaternion needed to get to new target direction
+        # math is potentially wrong, needs more fixing/tuning
         target_direction = self.translation_speed.normalize()
         # u in the quaternion
         norm_cross_prod = self.direction.cross3d(target_direction).normalize()
@@ -265,6 +272,7 @@ class Predator(Component, EnvironmentObject):
         # Update position by translation speed
         new_pos = pos + (self.translation_speed)
         main_component.setCurrentPosition(new_pos)
+        self.update()
 class Prey(Component, EnvironmentObject):
     """
     Prey model with animation
@@ -367,12 +375,18 @@ class Prey(Component, EnvironmentObject):
             # 1. Tank Boundary Collision Detection
         # Check each axis and reverse direction if beyond boundaries
         # reflects based on what axis limit it reached
-        if u - self.bound_radius < u_min or u + self.bound_radius > u_max:
+        if u - self.bound_radius < u_min :
             self.translation_speed = self.translation_speed.reflect(Point([1, 0, 0]))
-        if v - self.bound_radius < v_min or v + self.bound_radius > v_max:
+        if u + self.bound_radius > u_max:
+            self.translation_speed = self.translation_speed.reflect(Point([-1, 0, 0]))
+        if v - self.bound_radius < v_min:
             self.translation_speed = self.translation_speed.reflect(Point([0, 1, 0])) 
-        if w - self.bound_radius < w_min or w + self.bound_radius > w_max:
+        if v + self.bound_radius > v_max:
+            self.translation_speed = self.translation_speed.reflect(Point([0, -1, 0])) 
+        if w - self.bound_radius < w_min:
             self.translation_speed = self.translation_speed.reflect(Point([0, 0, 1]))
+        if w + self.bound_radius > w_max:
+            self.translation_speed = self.translation_speed.reflect(Point([0, 0, -1]))
         for i in range(len(components)):
             if components[i] is not self and i != 0:  # ignore self and the tank
                 other_pos = components[i].currentPos
@@ -392,6 +406,7 @@ class Prey(Component, EnvironmentObject):
         # Update position by translation speed
         new_pos = pos + (self.translation_speed)
         main_component.setCurrentPosition(new_pos)
+        self.update()
 
 class ModelArm(Component):
     """
@@ -444,11 +459,11 @@ class ModelBody(Component):
         right_antenna_tip = Sphere(Point((0, 0, antenna_length)), shaderProg, [antenna_radius * 1.25, antenna_radius * 1.25, antenna_radius * 1.25], Ct.GREENYELLOW)
         torso.addChild(right_antenna_shaft)
         right_antenna_shaft.addChild(right_antenna_tip)
-        # a nose like shape pointing out of the animal
-        nose = Cylinder(Point((-antenna_radius*2, 0, -linkageLength)), shaderProg, [antenna_radius, antenna_radius, antenna_length], Ct.ORANGE)
-        torso.addChild(nose)
+        # a tail like shape pointing out of the animal
+        tail = Cylinder(Point((-antenna_radius*2, 0, -linkageLength)), shaderProg, [antenna_radius, antenna_radius, antenna_length], Ct.ORANGE)
+        torso.addChild(tail)
         # Add components to the list
-        self.components = [torso, left_antenna_shaft, left_antenna_tip, right_antenna_shaft, right_antenna_tip, nose]
+        self.components = [torso, left_antenna_shaft, left_antenna_tip, right_antenna_shaft, right_antenna_tip, tail]
         left_antenna_shaft.setCurrentAngle(-90, self.uAxis)
         right_antenna_shaft.setCurrentAngle(-90, self.uAxis)
 

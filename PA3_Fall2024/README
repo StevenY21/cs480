@@ -9,5 +9,5 @@ The creatures will "bounce" off each other if collision with bounding boxes/sphe
 The creatures direction orientation changes based on movement direction, but that needs some fixing.
 More on Creature models:
 Predator: The scorpion like object, with a short tail and less body parts and limbs
-Prey: A jellyfish-like object, with a small cylindrical nose to show its the front.
-
+Prey: A jellyfish-like object, with a small cylindrical tail to show the back.
+The orientation of the creatures are off. The predator is facing the opposite way its moving for some reason, and the prey's orientation is a little bit inconsistent.
