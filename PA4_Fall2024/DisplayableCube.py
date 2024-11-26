@@ -69,61 +69,85 @@ class DisplayableCube(Displayable):
         self.height = height
         self.color = color
 
-        self.vertices = np.zeros([36, 11])
+        self.vertices = np.zeros([24, 11])
+        # can be reduced to only have unique vertices
         vl = np.array([
             # back face
-            -length/2, -width/2, -height/2, 0, 0, -1, *color,
-            -length/2, width/2, -height/2, 0, 0, -1, *color,
-            length/2, width/2, -height/2, 0, 0, -1, *color,
-
-            
-            -length / 2, -width / 2, -height / 2, 0, 0, -1, *color,
-            length / 2, width / 2, -height / 2, 0, 0, -1, *color,
-            length/2, -width/2, -height/2, 0, 0, -1, *color,
+            # 0, 1, 2, 0, 2, 3
+            -length/2, -width/2, -height/2, 0, 0, -1, *color, # 0
+            -length/2, width/2, -height/2, 0, 0, -1, *color, # 1
+            length/2, width/2, -height/2, 0, 0, -1, *color, # 2
+            #-length / 2, -width / 2, -height / 2, 0, 0, -1, *color, 0
+            #length / 2, width / 2, -height / 2, 0, 0, -1, *color, 2
+            length/2, -width/2, -height/2, 0, 0, -1, *color, # 3
             # front face
-            -length/2, -width/2, height/2, 0, 0, 1, *color,
-            length/2, -width/2, height/2, 0, 0, 1, *color,
-            length/2, width/2, height/2, 0, 0, 1, *color,
-            -length / 2, -width / 2, height / 2, 0, 0, 1, *color,
-            length / 2, width / 2, height / 2, 0, 0, 1, *color,
-            -length/2, width/2, height/2, 0, 0, 1, *color,
+            # 4 5 6 4 6 7
+            -length/2, -width/2, height/2, 0, 0, 1, *color, # 4
+            length/2, -width/2, height/2, 0, 0, 1, *color, # 5
+            length/2, width/2, height/2, 0, 0, 1, *color, # 6
+            #-length / 2, -width / 2, height / 2, 0, 0, 1, *color, 
+            #length / 2, width / 2, height / 2, 0, 0, 1, *color,
+            -length/2, width/2, height/2, 0, 0, 1, *color, # 7
             # left face
-            -length/2, -width/2, -height/2, -1, 0, 0, *color,
-            -length/2, -width/2, height/2, -1, 0, 0, *color,
-            -length/2, width/2, height/2, -1, 0, 0, *color,
-            -length / 2, -width / 2, -height / 2, -1, 0, 0, *color,
-            -length / 2, width / 2, height / 2, -1, 0, 0, *color,
-            -length/2, width/2, -height/2, -1, 0, 0, *color,
+            # 8 9 10 8 10 11
+            -length/2, -width/2, -height/2, -1, 0, 0, *color, # 8
+            -length/2, -width/2, height/2, -1, 0, 0, *color, # 9
+            -length/2, width/2, height/2, -1, 0, 0, *color, # 10
+            #-length / 2, -width / 2, -height / 2, -1, 0, 0, *color, 8
+            #-length / 2, width / 2, height / 2, -1, 0, 0, *color, 10
+            -length/2, width/2, -height/2, -1, 0, 0, *color, #11
             # right face
-            length/2, -width/2, height/2, 1, 0, 0, *color,
-            length/2, -width/2, -height/2, 1, 0, 0, *color,
-            length/2, width/2, -height/2, 1, 0, 0, *color,
-            length / 2, -width / 2, height / 2, 1, 0, 0, *color,
-            length / 2, width / 2, -height / 2, 1, 0, 0, *color,
-            length/2, width/2, height/2, 1, 0, 0, *color,
+            # 12 13 14 12 14 15
+            length/2, -width/2, height/2, 1, 0, 0, *color, # 12
+            length/2, -width/2, -height/2, 1, 0, 0, *color, # 13
+            length/2, width/2, -height/2, 1, 0, 0, *color, # 14
+            #length / 2, -width / 2, height / 2, 1, 0, 0, *color, 12
+            #length / 2, width / 2, -height / 2, 1, 0, 0, *color, 14
+            length/2, width/2, height/2, 1, 0, 0, *color, # 15
             # top face
-            -length/2, width/2, height/2, 0, 1, 0, *color,
-            length/2, width/2, height/2, 0, 1, 0, *color,
-            length/2, width/2, -height/2, 0, 1, 0, *color,
-            -length / 2, width / 2, height / 2, 0, 1, 0, *color,
-            length / 2, width / 2, -height / 2, 0, 1, 0, *color,
-            -length/2, width/2, -height/2, 0, 1, 0, *color,
+            # 16 17 18 16 18 19
+            -length/2, width/2, height/2, 0, 1, 0, *color, # 16
+            length/2, width/2, height/2, 0, 1, 0, *color, # 17
+            length/2, width/2, -height/2, 0, 1, 0, *color, # 18
+            #-length / 2, width / 2, height / 2, 0, 1, 0, *color, 16
+            #length / 2, width / 2, -height / 2, 0, 1, 0, *color, 18
+            -length/2, width/2, -height/2, 0, 1, 0, *color, # 19
             # bot face
-            -length/2, -width/2, -height/2, 0, -1, 0, *color,
-            length/2, -width/2, -height/2, 0, -1, 0, *color,
-            length/2, -width/2, height/2, 0, -1, 0, *color,
-            -length / 2, -width / 2, -height / 2, 0, -1, 0, *color,
-            length / 2, -width / 2, height / 2, 0, -1, 0, *color,
-            -length/2, -width/2, height/2, 0, -1, 0, *color,
-        ]).reshape((36, 9))
-        self.vertices[0:36, 0:9] = vl
+            # 20 21 22 20 22 23
+            -length/2, -width/2, -height/2, 0, -1, 0, *color, # 20
+            length/2, -width/2, -height/2, 0, -1, 0, *color, # 21
+            length/2, -width/2, height/2, 0, -1, 0, *color, # 22
+            #-length / 2, -width / 2, -height / 2, 0, -1, 0, *color,
+            #length / 2, -width / 2, height / 2, 0, -1, 0, *color,
+            -length/2, -width/2, height/2, 0, -1, 0, *color, # 23
+        ]).reshape((24, 9))
+        self.vertices[0:24, 0:9] = vl
 
-        self.indices = np.array([])
+        self.indices = np.array([
+            # back
+            0, 1, 2,
+            0, 2, 3,
+            # front
+            4, 5, 6,
+            4, 6, 7,
+            # left,
+            8, 9, 10,
+            8, 10, 11,
+            # right
+            12, 13, 14,
+            12, 14, 15,
+            # top
+            16, 17, 18,
+            16, 18, 19,
+            # bottom
+            20, 21, 22,
+            20, 22, 23,
+                                 ])
 
     def draw(self):
         self.vao.bind()
         # TODO 1.1 is at here, switch from vbo to ebo
-        self.vbo.draw()
+        self.ebo.draw()
         self.vao.unbind()
 
     def initialize(self):
