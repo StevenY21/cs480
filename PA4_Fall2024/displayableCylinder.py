@@ -1,3 +1,4 @@
+# displayableCylinder for displaying the cylinder with the caps
 """
 Define Torus here.
 First version in 11/01/2021
@@ -101,9 +102,9 @@ class DisplayableTorus(Displayable):
                     (self.outerRadius + self.innerRadius * math.cos(v*2*math.pi)) * math.sin(u*2*math.pi),
                     (self.innerRadius * math.sin(v*2*math.pi)),
                     # normal
-                    (math.cos(v*2*math.pi)) * math.cos(u*2*math.pi),
-                    (math.cos(v*2*math.pi)) * math.sin(u*2*math.pi),
-                    (math.sin(v*2*math.pi)),
+                    (self.outerRadius + self.innerRadius * math.cos(v*2*math.pi)) * math.cos(u*2*math.pi),
+                    (self.outerRadius + self.innerRadius * math.cos(v*2*math.pi)) * math.sin(u*2*math.pi),
+                    (self.innerRadius * math.sin(v*2*math.pi)),
                     # color
                     color.r,
                     color.g,
@@ -125,7 +126,6 @@ class DisplayableTorus(Displayable):
                     i * (nsides + 1) + j + 1
                 ]
                 index+=2
-
 
 
     def draw(self):

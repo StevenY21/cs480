@@ -75,9 +75,49 @@ class DisplayableEllipsoid(Displayable):
         self.color = color
 
         # we need to pad two more rows for poles and one more column for slice seam, to assign correct texture coord
-        self.vertices = np.zeros([(stacks) * (slices), 11])
-
-        self.indices = np.zeros(0)
+        # add 2 to both stacks and slices
+        self.vertices = np.zeros([(stacks+2) * (slices+2), 11])
+        # u is for the horizontal angle, v for the vertical
+        for i in range(0, stacks+2):
+            u = i/stacks
+            for j in range(0, slices+2):
+                v = j/slices
+                # [x, y, z, normal, color, texture coords]
+                self.vertices[i * (slices+2) + j] [0:9] = [
+                    # x, y, z calculated using parametric equations for a torus
+                    # x(u,v)=radX*cosv*cosu
+                    # y(u,v)=radY*cosv*sinu
+                    # z(u,v)=radZ*sinv
+                    # v 
+                    self.radiusX*math.cos(v*math.pi)*math.cos(u*2*math.pi),
+                    self.radiusY*math.cos(v*math.pi)*math.sin(u*2*math.pi),
+                    self.radiusZ*math.sin(v*math.pi),
+                    # normal
+                    self.radiusX*math.cos(v*math.pi)*math.cos(u*2*math.pi),
+                    self.radiusY*math.cos(v*math.pi)*math.sin(u*2*math.pi),
+                    self.radiusZ*math.sin(v*math.pi),
+                    # color
+                    color.r,
+                    color.g,
+                    color.b,
+                    # textures maybe add later
+                ]
+        index = 0
+        self.indices = np.zeros([stacks * slices * 2, 3])
+        for i in range(stacks):
+            for j in range(slices):
+                # 2 triangles per "surface"
+                self.indices[index] = [
+                    i * (slices+2) + j, 
+                    (i + 1) * (slices+2) + j, 
+                    i * (slices+2) + j + 1
+                ]
+                self.indices[index+1] = [
+                    (i + 1) * (slices+2) + j, 
+                    (i + 1) * (slices+2) + j + 1, 
+                    i * (slices+2) + j + 1
+                ]
+                index+=2
 
     def draw(self):
         self.vao.bind()
