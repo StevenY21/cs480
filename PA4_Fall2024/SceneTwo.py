@@ -53,7 +53,7 @@ class SceneOne(Component, Animation):
         m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.8, 0.6, 0.4, 1.0)), 64)
         torus.setMaterial(m2)
-        torus.renderingRouting = "normal"
+        torus.renderingRouting = "lighting"
         torus.rotate(90, torus.uAxis)
         self.addChild(torus)
 
@@ -61,7 +61,7 @@ class SceneOne(Component, Animation):
         m3 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.6, 0.4, 0.8, 1.0)), 64)
         sphere.setMaterial(m3)
-        sphere.renderingRouting = "normal"
+        sphere.renderingRouting = "lighting"
         self.addChild(sphere)
 
         l0 = Light(self.lightPos(self.lRadius, self.lAngles[0], self.lTransformations[0]),

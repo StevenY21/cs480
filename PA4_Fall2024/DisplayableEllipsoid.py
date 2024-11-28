@@ -83,19 +83,22 @@ class DisplayableEllipsoid(Displayable):
             for j in range(0, slices+2):
                 v = j/slices
                 # [x, y, z, normal, color, texture coords]
+                # x, y, z calculated using parametric equations for a torus
+                # x(u,v)=radX*cosv*cosu
+                # y(u,v)=radY*cosv*sinu
+                # z(u,v)=radZ*sinv
+                x = (self.radiusX*math.cos(v*2*math.pi)*math.cos(u*2*math.pi))
+                y = self.radiusY*math.cos(v*2*math.pi)*math.sin(u*2*math.pi)
+                z = self.radiusZ*math.sin(v*2*math.pi)
+                m = math.sqrt((x**2)+(y**2)+(z**2))
                 self.vertices[i * (slices+2) + j] [0:9] = [
-                    # x, y, z calculated using parametric equations for a torus
-                    # x(u,v)=radX*cosv*cosu
-                    # y(u,v)=radY*cosv*sinu
-                    # z(u,v)=radZ*sinv
-                    # v 
-                    self.radiusX*math.cos(v*math.pi)*math.cos(u*2*math.pi),
-                    self.radiusY*math.cos(v*math.pi)*math.sin(u*2*math.pi),
-                    self.radiusZ*math.sin(v*math.pi),
+                    x,
+                    y,
+                    z,
                     # normal
-                    self.radiusX*math.cos(v*math.pi)*math.cos(u*2*math.pi),
-                    self.radiusY*math.cos(v*math.pi)*math.sin(u*2*math.pi),
-                    self.radiusZ*math.sin(v*math.pi),
+                    x/m,
+                    y/m,
+                    z/m,
                     # color
                     color.r,
                     color.g,
@@ -108,14 +111,14 @@ class DisplayableEllipsoid(Displayable):
             for j in range(slices):
                 # 2 triangles per "surface"
                 self.indices[index] = [
+                    i * (slices+2) + j + 1,
                     i * (slices+2) + j, 
                     (i + 1) * (slices+2) + j, 
-                    i * (slices+2) + j + 1
                 ]
                 self.indices[index+1] = [
+                    i * (slices+2) + j + 1,
                     (i + 1) * (slices+2) + j, 
-                    (i + 1) * (slices+2) + j + 1, 
-                    i * (slices+2) + j + 1
+                    (i + 1) * (slices+2) + j + 1
                 ]
                 index+=2
 

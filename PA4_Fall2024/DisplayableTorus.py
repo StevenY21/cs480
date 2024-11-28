@@ -92,18 +92,22 @@ class DisplayableTorus(Displayable):
                 # u is for the outer ring angle
                 # v is for the "inside" of the torus
                 # [x, y, z, normal, color, texture coords]
+                # x, y, z calculated using parametric equations for a torus
+                # x(u,v)=(outerRadius+innerRadius*cosv)cosu, 
+                # y(u,v)=(outerRadius+innerRadius*cosv)sinu, 
+                # z(u,v)=innerRadius*sinv
+                x = (self.outerRadius + self.innerRadius * math.cos(v*2*math.pi)) * math.cos(u*2*math.pi)
+                y = (self.outerRadius + self.innerRadius * math.cos(v*2*math.pi)) * math.sin(u*2*math.pi)
+                z = (self.innerRadius * math.sin(v*2*math.pi))
+                m = math.sqrt((x**2)+(y**2)+(z**2))
                 self.vertices[i * (nsides+1) + j] [0:9] = [
-                    # x, y, z calculated using parametric equations for a torus
-                    # x(u,v)=(outerRadius+innerRadius*cosv)cosu, 
-                    # y(u,v)=(outerRadius+innerRadius*cosv)sinu, 
-                    # z(u,v)=innerRadius*sinv
-                    (self.outerRadius + self.innerRadius * math.cos(v*2*math.pi)) * math.cos(u*2*math.pi),
-                    (self.outerRadius + self.innerRadius * math.cos(v*2*math.pi)) * math.sin(u*2*math.pi),
-                    (self.innerRadius * math.sin(v*2*math.pi)),
+                    x,
+                    y,
+                    z,
                     # normal
-                    (math.cos(v*2*math.pi)) * math.cos(u*2*math.pi),
-                    (math.cos(v*2*math.pi)) * math.sin(u*2*math.pi),
-                    (math.sin(v*2*math.pi)),
+                    x/m,
+                    y/m,
+                    z/m,
                     # color
                     color.r,
                     color.g,
