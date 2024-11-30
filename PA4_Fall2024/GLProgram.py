@@ -244,7 +244,6 @@ class GLProgram:
             
             // Reserved for illumination rendering, routing name is "lighting" or "illumination"
             if ((renderingFlag >> 0 & 0x1) == 1){{
-                vec4 result = vec4(vColor, 1.0);
 
                 ////////// TODO 3: Illuminate your meshes
                 // Requirements:
@@ -252,6 +251,37 @@ class GLProgram:
                 //   Specular, and Ambient. You’ll implement the missing part in the Fragment shader source code. 
                 //   This part will be implemented in OpenGL Shading Language. Your code should iterate through 
                 //   all lights in the Light array.
+                
+                vec3 norm = normalize(vNormal);
+                vec3 viewDirection = normalize({self.attribs["viewPosition"]} - vPos);
+                vec4 result;
+                //iterating through entire light array
+                for (int i = 0; i < MAX_LIGHT_NUM; i++) {{
+                    // ambient = ambient material * light source color
+                    vec4 ambient = {self.attribs["material"]}.ambient * {self.attribs["light"]}[i].color ;
+                    vec3 lightDirection = normalize({self.attribs["light"]}[i].position - vPos);
+                    if ({self.attribs["light"]}[i].infiniteOn) {{ //infinite light for TODO 4
+                        lightDirection = normalize(-{self.attribs["light"]}[i].infiniteDirection);
+                    }} 
+                    // diffuse = diffuse material * light source color * NL if NL > 0 else 0
+                    // get N*L (norm and light direction dot product)
+                    vec4 diffuse  = vec4(0.0);
+                    float nL = dot(norm, lightDirection);
+                    if (nL > 0.0) {{
+                        diffuse = {self.attribs["material"]}.diffuse * {self.attribs["light"]}[i].color * nL;
+                    }}
+                    // specular = specular material * light source color * VR^highlight if NL and VR > 0 else 0
+                    // get V*R (viewer direction and reflection direction dot product)
+                    vec4 specular = vec4(0.0);
+                    vec3 reflectDirection = reflect(-lightDirection, norm);
+                    float vR = dot(viewDirection, reflectDirection);
+                    if ((vR > 0.0 && nL > 0.0)) {{
+                        specular = {self.attribs["material"]}.specular * {self.attribs["light"]}[i].color * pow(vR, {self.attribs["material"]}.highlight);
+                    }}
+
+                    result += diffuse + specular;
+
+                }}
 
                 
                 ////////// TODO 4: Set up lights
@@ -261,7 +291,6 @@ class GLProgram:
                 //   Spotlight with radial and angular attenuation
                 //   * In the Sketch.py file Interrupt_keyboard method, bind keyboard interfaces that allows 
                 //   the user to toggle on/off specular, diffuse, and ambient with keys S, D, A.
-
                 results[ri] = result;
                 ri+=1;
             }}
@@ -289,7 +318,7 @@ class GLProgram:
                 //   vertex normal will be in the range -1 to 1. You will need to offset and rescale them to the 
                 //   range 0 to 1.
                 
-                vec3 normalColor = vNormal * 0.5 + 0.5; // Normalize and rescale to [0, 1]
+                vec3 normalColor = vNormal * 0.5 + 0.5; // sets vNormals between -1 and 0  to between 0 and 0.5, and 0 and 1 to be 0.5 and 1
                 results[ri] = vec4(normalColor, 1.0);
                 ri+=1;
             }}
