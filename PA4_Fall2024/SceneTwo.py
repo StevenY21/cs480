@@ -66,7 +66,7 @@ class SceneTwo(Component, Animation):
         torus2 = Component(Point((0, 0, 0)), DisplayableTorus(shaderProg, 0.15, 0.4, 36, 36))
         m4 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.8, 0.6, 0.4, 1.0)), 64)
-        torus.setMaterial(m4)
+        torus2.setMaterial(m4)
         torus2.renderingRouting = "lighting"
         torus2.rotate(90, torus2.uAxis)
         self.addChild(torus2)
