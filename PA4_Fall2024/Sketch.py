@@ -170,7 +170,7 @@ class Sketch(CanvasBase):
         self.basisAxes = ModelAxes(self.shaderProg, Point((0, 0, 0)))
         self.basisAxes.initialize()
 
-        self.switchScene(SceneOne(self.shaderProg))
+        self.switchScene(SceneTwo(self.shaderProg))
 
         gl.glClearColor(*self.backgroundColor, 1.0)
         gl.glClearDepth(1.0)
@@ -411,6 +411,8 @@ class Sketch(CanvasBase):
             self.shaderProg.setBool("imageFlag", self.ImageModeOn)
 
         # TODO 4.2 is at here
+        #if chr(keycode) in "aA":
+
         # TODO 5.3 is at here
 
 
