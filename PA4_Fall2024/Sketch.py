@@ -22,6 +22,7 @@ from GLProgram import GLProgram
 from GLBuffer import VAO, VBO, EBO, Texture
 import GLUtility
 from SceneOne import SceneOne
+from SceneTwo import SceneTwo
 
 try:
     import wx

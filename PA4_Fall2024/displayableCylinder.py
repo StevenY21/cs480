@@ -106,9 +106,7 @@ class DisplayableTorus(Displayable):
                     (self.outerRadius + self.innerRadius * math.cos(v*2*math.pi)) * math.sin(u*2*math.pi),
                     (self.innerRadius * math.sin(v*2*math.pi)),
                     # color
-                    color.r,
-                    color.g,
-                    color.b,
+                    *color
                     # textures maybe add later
                 ]
         index = 0

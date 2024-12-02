@@ -251,14 +251,22 @@ class GLProgram:
                 //   Specular, and Ambient. You’ll implement the missing part in the Fragment shader source code. 
                 //   This part will be implemented in OpenGL Shading Language. Your code should iterate through 
                 //   all lights in the Light array.
-                
+                ////////// TODO 4: Set up lights
+                // Requirements:
+                //   * Use the Light struct which is defined above and the provided Light class to implement 
+                //   illumination equations for 3 different light sources: Point light, Infinite light, 
+                //   Spotlight with radial and angular attenuation
+                //   * In the Sketch.py file Interrupt_keyboard method, bind keyboard interfaces that allows 
+                //   the user to toggle on/off specular, diffuse, and ambient with keys S, D, A.
+
                 vec3 norm = normalize(vNormal);
+                // directions of both light and view are that pos - current pos
                 vec3 viewDirection = normalize({self.attribs["viewPosition"]} - vPos);
-                vec4 result;
+                // result = I(ambient) + summation (I(diffuse) + I(specular))
+                vec4 result = {self.attribs["material"]}.ambient;
                 //iterating through entire light array
                 for (int i = 0; i < MAX_LIGHT_NUM; i++) {{
-                    // ambient = ambient material * light source color
-                    vec4 ambient = {self.attribs["material"]}.ambient * {self.attribs["light"]}[i].color ;
+                    // default point light
                     vec3 lightDirection = normalize({self.attribs["light"]}[i].position - vPos);
                     if ({self.attribs["light"]}[i].infiniteOn) {{ //infinite light for TODO 4
                         lightDirection = normalize(-{self.attribs["light"]}[i].infiniteDirection);
@@ -271,26 +279,37 @@ class GLProgram:
                         diffuse = {self.attribs["material"]}.diffuse * {self.attribs["light"]}[i].color * nL;
                     }}
                     // specular = specular material * light source color * VR^highlight if NL and VR > 0 else 0
-                    // get V*R (viewer direction and reflection direction dot product)
+                    // R = 2(dot(L, N))N - L: (2 * (dot(lightDirection, norm)) * norm * lightDirection)
+                    // apparently reflecting just works will double check more later
                     vec4 specular = vec4(0.0);
-                    vec3 reflectDirection = reflect(-lightDirection, norm);
-                    float vR = dot(viewDirection, reflectDirection);
+                    vec3 R = normalize(reflect(-lightDirection, norm));
+                    float vR = dot(viewDirection, R);
                     if ((vR > 0.0 && nL > 0.0)) {{
                         specular = {self.attribs["material"]}.specular * {self.attribs["light"]}[i].color * pow(vR, {self.attribs["material"]}.highlight);
                     }}
+                    // multiply sum of diffuse and specular by (spotRadial + spotAngular) if spotOn on, else don't
+                    // FIX THIS SPOTLIGHT
+                    if ({self.attribs["light"]}[i].spotOn) {{
+                        float distance = length({self.attribs["light"]}[i].position - vPos);
+                        float radAttenuationX = {self.attribs["light"]}[i].spotRadialFactor.x * (pow(distance, 2));
+                        float radAttenuationY = {self.attribs["light"]}[i].spotRadialFactor.y * distance;
+                        float radAttenuationZ = {self.attribs["light"]}[i].spotRadialFactor.z;
+                        float radialAttenuation = 1.0 / (radAttenuationX + radAttenuationY + radAttenuationZ);
+                        // angular attenuation = dot(vObj * vl)^as if dot(vObj * vl) > cos angular limit otherwise 0
+                        float angularAttenuation = 0.0;
+                        // vObj is the vector direction between the vertex pos and the light source pos
+                        vec3 vObj = normalize(vPos - {self.attribs["light"]}[i].position);
+                        // vl is just the spotDirection
+                        vec3 vl = {self.attribs["light"]}[i].spotDirection;
+                        if (dot(vObj, vl) > cos({self.attribs["light"]}[i].spotAngleLimit)) {{
+                            angularAttenuation = pow(dot(vObj, vl), 2.0);
+                        }}
+                        result += (radialAttenuation * angularAttenuation) * (diffuse + specular); // filler for now as I figure out the equation
 
-                    result += diffuse + specular;
-
+                    }} else {{
+                        result += diffuse + specular;
+                    }}
                 }}
-
-                
-                ////////// TODO 4: Set up lights
-                // Requirements:
-                //   * Use the Light struct which is defined above and the provided Light class to implement 
-                //   illumination equations for 3 different light sources: Point light, Infinite light, 
-                //   Spotlight with radial and angular attenuation
-                //   * In the Sketch.py file Interrupt_keyboard method, bind keyboard interfaces that allows 
-                //   the user to toggle on/off specular, diffuse, and ambient with keys S, D, A.
                 results[ri] = result;
                 ri+=1;
             }}
@@ -318,7 +337,7 @@ class GLProgram:
                 //   vertex normal will be in the range -1 to 1. You will need to offset and rescale them to the 
                 //   range 0 to 1.
                 
-                vec3 normalColor = vNormal * 0.5 + 0.5; // sets vNormals between -1 and 0  to between 0 and 0.5, and 0 and 1 to be 0.5 and 1
+                vec3 normalColor = normalize(vNormal * 0.5 + 0.5); // sets vNormals between -1 and 0  to between 0 and 0.5, and 0 and 1 to be 0.5 and 1
                 results[ri] = vec4(normalColor, 1.0);
                 ri+=1;
             }}
@@ -470,7 +489,7 @@ class GLProgram:
 
         self.setBool(f"""{self.attribs["light"]}[{lightIndex}].spotOn""", light.spotOn, False)
         self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].spotDirection""", light.spotDirection, False)
-        self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].spotAngleLimit""", light.spotRadialFactor, False)
+        self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].spotRadialFactor""", light.spotRadialFactor, False)
         self.setFloat(f"""{self.attribs["light"]}[{lightIndex}].spotAngleLimit""", light.spotAngleLimit, False)
 
     def clearAllLights(self):
