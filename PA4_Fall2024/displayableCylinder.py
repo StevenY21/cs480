@@ -47,7 +47,7 @@ except ImportError:
 #   “./assets/earth.jpg” for the sphere as the texture image.
 #   There should be no seams in the resulting texture-mapped model.
 
-class DisplayableTorus(Displayable):
+class DisplayableCylinder(Displayable):
     vao = None
     vbo = None
     ebo = None
