@@ -130,6 +130,8 @@ class Sketch(CanvasBase):
     specularOn = False
     diffuseOn = False
 
+    sceneIdx = 0
+    sceneLst = [SceneOne, SceneTwo]
     def __init__(self, parent):
         """
         Init everything. You should set your model here.
@@ -395,8 +397,18 @@ class Sketch(CanvasBase):
         if keycode in [wx.WXK_RETURN]:
             self.update()
         if keycode in [wx.WXK_LEFT]:
+            # go back a scene
+            self.sceneIdx -= 1
+            if self.sceneIdx < 0:
+                self.sceneIdx = len(self.sceneLst) - 1
+            self.switchScene(self.sceneLst[self.sceneIdx](self.shaderProg))
             self.update()
         if keycode in [wx.WXK_RIGHT]:
+            # go next scene
+            self.sceneIdx += 1
+            if self.sceneIdx >= len(self.sceneLst):
+                self.sceneIdx = 0
+            self.switchScene(self.sceneLst[self.sceneIdx](self.shaderProg))
             self.update()
         if keycode in [wx.WXK_UP]:
             self.Interrupt_Scroll(1)

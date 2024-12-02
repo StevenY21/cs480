@@ -90,15 +90,18 @@ class DisplayableEllipsoid(Displayable):
                 x = (self.radiusX*math.cos(v*2*math.pi)*math.cos(u*2*math.pi))
                 y = self.radiusY*math.cos(v*2*math.pi)*math.sin(u*2*math.pi)
                 z = self.radiusZ*math.sin(v*2*math.pi)
-                m = math.sqrt((x**2)+(y**2)+(z**2))
+                # surface normals
+                nx = (2*x)/(self.radiusX**2)
+                ny = (2*y)/(self.radiusY**2)
+                nz = (2*z)/(self.radiusZ**2)
+                m = math.sqrt((nx**2)+(ny**2)+(nz**2))
                 self.vertices[i * (slices+2) + j] [0:9] = [
                     x,
                     y,
                     z,
-                    # normal (USE SURFACE NORMAL EQAUTIONS CUH)
-                    x/m,
-                    y/m,
-                    z/m,
+                    nx/m,
+                    ny/m,
+                    nz/m,
                     # color
                     *color
                     # textures maybe add later

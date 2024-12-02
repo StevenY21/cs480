@@ -301,7 +301,7 @@ class GLProgram:
                     vec3 R = normalize(reflect(-lightDirection, norm));
                     float vR = dot(viewDirection, R);
                     if ({self.attribs["specularOn"]}) {{
-                        if ((vR > 0.0 && nL > 0.0)) {{
+                        if ((vR > 0.0)) {{
                             specular = {self.attribs["material"]}.specular * {self.attribs["light"]}[i].color * pow(vR, {self.attribs["material"]}.highlight);
                         }}
                     }}
@@ -320,7 +320,7 @@ class GLProgram:
                         // vl is just the spotDirection
                         vec3 vl = {self.attribs["light"]}[i].spotDirection;
                         if (dot(vObj, vl) > cos({self.attribs["light"]}[i].spotAngleLimit)) {{
-                            angularAttenuation = pow(dot(vObj, vl), 2.0);
+                            angularAttenuation = pow(dot(vObj, vl), {self.attribs["material"]}.highlight);
                         }}
                         result += (radialAttenuation * angularAttenuation) * (diffuse + specular); // filler for now as I figure out the equation
 

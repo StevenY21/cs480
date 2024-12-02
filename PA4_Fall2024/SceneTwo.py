@@ -20,7 +20,8 @@ import GLUtility
 from DisplayableCube import DisplayableCube
 from DisplayableEllipsoid import DisplayableEllipsoid
 from DisplayableTorus import DisplayableTorus
-
+from DisplayableCylinder import DisplayableCylinder
+# displays a static pawn chess piece
 class SceneTwo(Component, Animation):
     lights = None
     lightCubes = None
@@ -41,13 +42,30 @@ class SceneTwo(Component, Animation):
                                  self.glutility.rotate(120, [0, 0, 1], False)]
         self.lRadius = 3
         self.lAngles = [0, 0, 0]
-
+        """
+        Test code for the middle part of the pawn
+        cylinder = Component(Point((0, 0.5, 0)), DisplayableCylinder(shaderProg, 0.3, 1, 36))
+        m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
+                      np.array((0.8, 0.6, 0.4, 1.0)), 64)
+        cylinder.setMaterial(m1)
+        cylinder.renderingRouting = "lighting"
+        cylinder.rotate(90, cylinder.uAxis)
+        self.addChild(cylinder)
         cube = Component(Point((0, 0.5, 0)), DisplayableCube(shaderProg, 0.5, 1, 0.5))
         m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.4, 0.8, 0.6, 0.1)), 64)
         cube.setMaterial(m1)
         cube.renderingRouting = "lighting"
         self.addChild(cube)
+        
+        """
+        cylinder = Component(Point((0, 0.5, 0)), DisplayableCylinder(shaderProg, 0.3, 0.5, 36, 1))
+        m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
+                      np.array((0.8, 0.6, 0.4, 1.0)), 64)
+        cylinder.setMaterial(m1)
+        cylinder.renderingRouting = "lighting"
+        cylinder.rotate(90, cylinder.uAxis)
+        self.addChild(cylinder)
 
         torus = Component(Point((0, 1, 0)), DisplayableTorus(shaderProg, 0.15, 0.3, 36, 36))
         m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),

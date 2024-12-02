@@ -53,18 +53,17 @@ class DisplayableCylinder(Displayable):
     ebo = None
     shaderProg = None
 
-    # stores current torus's information, read-only
+    # stores current cylinder's information, read-only
     nsides = 0
-    rings = 0
-    innerRadius = 0
-    outerRadius = 0
+    radius = 0
+    height = 0
     color = None
 
     vertices = None
     indices = None
 
-    def __init__(self, shaderProg, innerRadius=0.25, outerRadius=0.5, nsides=36, rings=36, color=ColorType.SOFTBLUE):
-        super(DisplayableTorus, self).__init__()
+    def __init__(self, shaderProg, radius=0.5, height=1, nsides=36, stacks=1, color=ColorType.SOFTBLUE):
+        super(DisplayableCylinder, self).__init__()
         self.shaderProg = shaderProg
         self.shaderProg.use()
 
@@ -72,58 +71,85 @@ class DisplayableCylinder(Displayable):
         self.vbo = VBO()  # vbo can only be initiate with glProgram activated
         self.ebo = EBO()
 
-        self.generate(innerRadius, outerRadius, nsides, rings, color)
+        self.generate(radius, height, nsides, stacks, color)
 
-    def generate(self, innerRadius=0.25, outerRadius=0.5, nsides=36, rings=36, color=ColorType.SOFTBLUE):
-        self.innerRadius = innerRadius # 
-        self.outerRadius = outerRadius # radius of the ring
+    def generate(self, radius=0.5, height=1, nsides=36, stacks=1, color=ColorType.SOFTBLUE):
+        self.radius = radius
+        self.height = height 
         self.nsides = nsides
-        self.rings = rings
         self.color = color
-
+        self.stacks = stacks
         # we need to pad one more row for both nsides and rings, to assign correct texture coord to them
         # add one for padding
-        self.vertices = np.zeros([(nsides+1) * (rings+1), 11])
-        self.indices = np.zeros([rings * nsides * 2, 3])
-        # for vertices
-        for i in range(0, rings+1):
-            u = i/rings
-            for j in range(0, nsides+1):
-                v = j/nsides
-                # u is for the outer ring angle
-                # v is for the "inside" of the torus
-                # [x, y, z, normal, color, texture coords]
-                self.vertices[i * (nsides+1) + j] [0:9] = [
-                    # x, y, z calculated using parametric equations for a torus
-                    # x(u,v)=(outerRadius+innerRadius*cosv)cosu, 
-                    # y(u,v)=(outerRadius+innerRadius*cosv)sinu, 
-                    # z(u,v)=innerRadius*sinv
-                    (self.outerRadius + self.innerRadius * math.cos(v*2*math.pi)) * math.cos(u*2*math.pi),
-                    (self.outerRadius + self.innerRadius * math.cos(v*2*math.pi)) * math.sin(u*2*math.pi),
-                    (self.innerRadius * math.sin(v*2*math.pi)),
-                    # normal
-                    (self.outerRadius + self.innerRadius * math.cos(v*2*math.pi)) * math.cos(u*2*math.pi),
-                    (self.outerRadius + self.innerRadius * math.cos(v*2*math.pi)) * math.sin(u*2*math.pi),
-                    (self.innerRadius * math.sin(v*2*math.pi)),
-                    # color
+        self.vertices = np.zeros([stacks*(nsides+1)*2 + 2, 11]) # cylinder sides + bottom + top vertices
+        self.indices = np.zeros([stacks*(nsides+1)*4 + 2, 3]) # triangles for cylinder sides, for bottom, and top
+        for j in range(stacks+1):
+            u = j/stacks
+            for i in range(nsides+1):
+                x = self.radius * math.cos(2 * math.pi * i/nsides)
+                y = self.radius * math.sin(2 * math.pi * i/nsides)
+                z = u
+                # 2 different vertices for both top and bottom/ +z and -z of the cylinder
+                nx = math.cos(2 * math.pi * i/nsides)
+                ny = math.sin(2 * math.pi * i/nsides)
+                nz = 0
+                m = math.sqrt((nx**2)+(ny**2) + (nz**2))
+                self.vertices[i][0:9]  = [
+                    x,
+                    y,
+                    -z,
+                    nx/m,
+                    ny/m,
+                    0,
                     *color
-                    # textures maybe add later
+                ]
+                self.vertices[i + nsides + 1][0:9] = [
+                    x,
+                    y,
+                    z,
+                    nx/m,
+                    ny/m,
+                    0,
+                    *color
                 ]
         index = 0
-        for i in range(rings):
-            for j in range(nsides):
-                # 2 triangles per "surface"
-                self.indices[index] = [
-                    i * (nsides + 1) + j, 
-                    (i + 1) * (nsides + 1) + j, 
-                    i * (nsides + 1) + j + 1
-                ]
-                self.indices[index+1] = [
-                    (i + 1) * (nsides + 1) + j, 
-                    (i + 1) * (nsides + 1) + j + 1, 
-                    i * (nsides + 1) + j + 1
-                ]
-                index+=2
+        for i in range(nsides):
+            # Side triangles
+            self.indices[index] = [
+                i, 
+                (i + 1) % nsides, 
+                i + (nsides + 1)
+            ]
+            self.indices[index + 1] = [
+                (i + 1) % nsides, 
+                (i + 1) % nsides + (nsides + 1), 
+                i + (nsides + 1)
+            ]
+            index += 2
+        # Generate indices for the bottom cap (fan)
+        botCenterIdx = len(self.vertices) - 2
+        self.vertices[botCenterIdx][0:9] = [0, 0, -1, 0, 0, -1, *color]
+        index += 1
+        for i in range(nsides):
+            self.indices[index] = [
+                botCenterIdx,
+                i,
+                (i + 1) % nsides
+            ]
+
+            index += 1
+
+        # Generate indices for the top cap (fan)
+        topCenterIdx = len(self.vertices) - 1
+        self.vertices[topCenterIdx][0:9] = [0, 0, 1, 0, 0, 1, *color]
+
+        for i in range(nsides):
+            self.indices[index] =[
+                topCenterIdx,
+                (i + 1) % nsides + nsides + 1,
+                i + nsides + 1
+            ]
+            index += 1
 
 
     def draw(self):

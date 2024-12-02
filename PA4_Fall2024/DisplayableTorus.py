@@ -99,15 +99,18 @@ class DisplayableTorus(Displayable):
                 x = (self.outerRadius + self.innerRadius * math.cos(v*2*math.pi)) * math.cos(u*2*math.pi)
                 y = (self.outerRadius + self.innerRadius * math.cos(v*2*math.pi)) * math.sin(u*2*math.pi)
                 z = (self.innerRadius * math.sin(v*2*math.pi))
-                m = math.sqrt((x**2)+(y**2)+(z**2))
+                nx = self.innerRadius * math.cos(v*2*math.pi) * math.cos(u*2*math.pi)
+                ny = self.innerRadius * math.cos(v*2*math.pi) * math.sin(u*2*math.pi)
+                nz = (self.outerRadius + (self.innerRadius * math.cos(v*2*math.pi))) * (self.innerRadius * math.sin(v*2*math.pi))
+                m = math.sqrt((nx**2)+(ny**2)+(nz**2))
                 self.vertices[i * (nsides+1) + j] [0:9] = [
                     x,
                     y,
                     z,
                     # normal
-                    x/m,
-                    y/m,
-                    z/m,
+                    nx/m,
+                    ny/m,
+                    nz/m,
                     # color
                     color.r,
                     color.g,
