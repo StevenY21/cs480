@@ -88,7 +88,7 @@ class DisplayableCylinder(Displayable):
             for i in range(nsides+1):
                 x = self.radius * math.cos(2 * math.pi * i/nsides)
                 y = self.radius * math.sin(2 * math.pi * i/nsides)
-                z = u
+                z = u * height/2
                 # 2 different vertices for both top and bottom/ +z and -z of the cylinder
                 nx = math.cos(2 * math.pi * i/nsides)
                 ny = math.sin(2 * math.pi * i/nsides)
@@ -128,7 +128,7 @@ class DisplayableCylinder(Displayable):
             index += 2
         # Generate indices for the bottom cap (fan)
         botCenterIdx = len(self.vertices) - 2
-        self.vertices[botCenterIdx][0:9] = [0, 0, -1, 0, 0, -1, *color]
+        self.vertices[botCenterIdx][0:9] = [0, 0, -height/2, 0, 0, -1, *color]
         index += 1
         for i in range(nsides):
             self.indices[index] = [
@@ -141,7 +141,7 @@ class DisplayableCylinder(Displayable):
 
         # Generate indices for the top cap (fan)
         topCenterIdx = len(self.vertices) - 1
-        self.vertices[topCenterIdx][0:9] = [0, 0, 1, 0, 0, 1, *color]
+        self.vertices[topCenterIdx][0:9] = [0, 0, height/2, 0, 0, 1, *color]
 
         for i in range(nsides):
             self.indices[index] =[

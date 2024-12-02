@@ -23,7 +23,7 @@ from GLBuffer import VAO, VBO, EBO, Texture
 import GLUtility
 from SceneOne import SceneOne
 from SceneTwo import SceneTwo
-
+from SceneThree import SceneThree
 try:
     import wx
     from wx import glcanvas
@@ -131,7 +131,7 @@ class Sketch(CanvasBase):
     diffuseOn = False
 
     sceneIdx = 0
-    sceneLst = [SceneOne, SceneTwo]
+    sceneLst = [SceneOne, SceneTwo, SceneThree]
     def __init__(self, parent):
         """
         Init everything. You should set your model here.

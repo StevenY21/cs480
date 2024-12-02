@@ -16,6 +16,7 @@ import GLUtility
 from DisplayableCube import DisplayableCube
 from DisplayableEllipsoid import DisplayableEllipsoid
 from DisplayableTorus import DisplayableTorus
+from DisplayableCylinder import DisplayableCylinder
 class SceneOne(Component, Animation):
     lights = None
     lightCubes = None
