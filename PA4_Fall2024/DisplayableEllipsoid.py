@@ -112,14 +112,14 @@ class DisplayableEllipsoid(Displayable):
             for j in range(slices):
                 # 2 triangles per "surface"
                 self.indices[index] = [
-                    i * (slices+2) + j + 1,
-                    i * (slices+2) + j, 
-                    (i + 1) * (slices+2) + j, 
+                    i * (slices+2) + j, #v1 
+                    i * (slices+2) + j + 1, #v2
+                    (i + 1) * (slices+2) + j, #v3
                 ]
                 self.indices[index+1] = [
-                    i * (slices+2) + j + 1,
-                    (i + 1) * (slices+2) + j, 
-                    (i + 1) * (slices+2) + j + 1
+                    i * (slices+2) + j + 1, #v2
+                    (i + 1) * (slices+2) + j, #v3
+                    (i + 1) * (slices+2) + j + 1 #v4
                 ]
                 index+=2
 

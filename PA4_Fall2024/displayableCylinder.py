@@ -114,20 +114,20 @@ class DisplayableCylinder(Displayable):
                 ]
         index = 0
         for i in range(nsides):
-            # Side triangles
+            # Side triangles, 2 at a time
             self.indices[index] = [
-                i, 
-                (i + 1) % nsides, 
-                i + (nsides + 1)
+                i, #v1
+                (i + 1) % nsides, # v2
+                i + (nsides + 1) # v3
             ]
             self.indices[index + 1] = [
-                (i + 1) % nsides, 
-                (i + 1) % nsides + (nsides + 1), 
-                i + (nsides + 1)
+                (i + 1) % nsides, # v2
+                i + (nsides + 1), #v3
+                (i + 1) % nsides + (nsides + 1), # v4
             ]
             index += 2
-        # Generate indices for the bottom cap (fan)
-        botCenterIdx = len(self.vertices) - 2
+        # get indices for bottom cap
+        botCenterIdx = len(self.vertices) - 2 # a center index for connecting triangles to cap it
         self.vertices[botCenterIdx][0:9] = [0, 0, -height/2, 0, 0, -1, *color]
         index += 1
         for i in range(nsides):
@@ -139,10 +139,9 @@ class DisplayableCylinder(Displayable):
 
             index += 1
 
-        # Generate indices for the top cap (fan)
-        topCenterIdx = len(self.vertices) - 1
+        # get indices for top cap
+        topCenterIdx = len(self.vertices) - 1 
         self.vertices[topCenterIdx][0:9] = [0, 0, height/2, 0, 0, 1, *color]
-
         for i in range(nsides):
             self.indices[index] =[
                 topCenterIdx,
