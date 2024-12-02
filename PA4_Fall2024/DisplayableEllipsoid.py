@@ -95,7 +95,7 @@ class DisplayableEllipsoid(Displayable):
                     x,
                     y,
                     z,
-                    # normal
+                    # normal (USE SURFACE NORMAL EQAUTIONS CUH)
                     x/m,
                     y/m,
                     z/m,

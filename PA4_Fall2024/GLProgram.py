@@ -60,12 +60,13 @@ class GLProgram:
 
     ready = False  # a control flag which reflect if this GLprogram is ready
     debug = 0
-
+    ambientOn = True
+    specularOn = True
+    diffuseOn = True
     def __init__(self) -> None:
         self.program = gl.glCreateProgram()
 
         self.ready = False
-
         # define attribs name and corresponding method to set it
         self.attribs = {
             "vertexPos": "aPos",
@@ -90,6 +91,10 @@ class GLProgram:
             "iResolution": "iResolution",
             "iMouse": "iMouse",
             "iTime": "iTime",
+
+            "ambientOn": "ambientOn",
+            "diffuseOn": "diffuseOn",
+            "specularOn": "specularOn"
         }
         self.attribs["diffuse"] = self.attribs["material"] + ".diffuse"
         self.attribs["specular"] = self.attribs["material"] + ".specular"
@@ -201,6 +206,9 @@ class GLProgram:
         uniform vec3 {self.attribs["viewPosition"]};
         uniform Material {self.attribs["material"]};
         uniform Light {self.attribs["light"]}[MAX_LIGHT_NUM];
+        uniform bool {self.attribs["ambientOn"]};
+        uniform bool {self.attribs["diffuseOn"]};
+        uniform bool {self.attribs["specularOn"]};
         
         uniform bool imageFlag;
         uniform vec3 iResolution;
@@ -262,30 +270,40 @@ class GLProgram:
                 vec3 norm = normalize(vNormal);
                 // directions of both light and view are that pos - current pos
                 vec3 viewDirection = normalize({self.attribs["viewPosition"]} - vPos);
-                // result = I(ambient) + summation (I(diffuse) + I(specular))
-                vec4 result = {self.attribs["material"]}.ambient;
+                // result =  summation (I(ambient)+ I(diffuse) + I(specular))
+                vec4 result = vec4(0.0);
                 //iterating through entire light array
                 for (int i = 0; i < MAX_LIGHT_NUM; i++) {{
+                    // use bools to check
                     // default point light
+                    if ({self.attribs["ambientOn"]}) {{
+                        result += {self.attribs["material"]}.ambient * {self.attribs["light"]}[i].color;
+                    }}
                     vec3 lightDirection = normalize({self.attribs["light"]}[i].position - vPos);
                     if ({self.attribs["light"]}[i].infiniteOn) {{ //infinite light for TODO 4
                         lightDirection = normalize(-{self.attribs["light"]}[i].infiniteDirection);
                     }} 
                     // diffuse = diffuse material * light source color * NL if NL > 0 else 0
                     // get N*L (norm and light direction dot product)
+                    
                     vec4 diffuse  = vec4(0.0);
                     float nL = dot(norm, lightDirection);
-                    if (nL > 0.0) {{
-                        diffuse = {self.attribs["material"]}.diffuse * {self.attribs["light"]}[i].color * nL;
+                    if ({self.attribs["diffuseOn"]}){{
+                        if (nL > 0.0) {{
+                            diffuse = {self.attribs["material"]}.diffuse * {self.attribs["light"]}[i].color * nL;
+                        }}
                     }}
                     // specular = specular material * light source color * VR^highlight if NL and VR > 0 else 0
                     // R = 2(dot(L, N))N - L: (2 * (dot(lightDirection, norm)) * norm * lightDirection)
                     // apparently reflecting just works will double check more later
                     vec4 specular = vec4(0.0);
+                    
                     vec3 R = normalize(reflect(-lightDirection, norm));
                     float vR = dot(viewDirection, R);
-                    if ((vR > 0.0 && nL > 0.0)) {{
-                        specular = {self.attribs["material"]}.specular * {self.attribs["light"]}[i].color * pow(vR, {self.attribs["material"]}.highlight);
+                    if ({self.attribs["specularOn"]}) {{
+                        if ((vR > 0.0 && nL > 0.0)) {{
+                            specular = {self.attribs["material"]}.specular * {self.attribs["light"]}[i].color * pow(vR, {self.attribs["material"]}.highlight);
+                        }}
                     }}
                     // multiply sum of diffuse and specular by (spotRadial + spotAngular) if spotOn on, else don't
                     // FIX THIS SPOTLIGHT

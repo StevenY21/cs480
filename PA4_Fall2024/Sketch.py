@@ -126,6 +126,10 @@ class Sketch(CanvasBase):
     MOUSE_ROTATE_SPEED = 1
     MOUSE_SCROLL_SPEED = 2.5
 
+    ambientOn = False
+    specularOn = False
+    diffuseOn = False
+
     def __init__(self, parent):
         """
         Init everything. You should set your model here.
@@ -140,7 +144,6 @@ class Sketch(CanvasBase):
         self.last_mouse_middlePosition = [0, 0]
         self.components = []
         self.backgroundColor = ColorType.BLUEGREEN
-
         # Image mode settings
         self.start_time = time.time()
 
@@ -170,7 +173,7 @@ class Sketch(CanvasBase):
         self.basisAxes = ModelAxes(self.shaderProg, Point((0, 0, 0)))
         self.basisAxes.initialize()
 
-        self.switchScene(SceneTwo(self.shaderProg))
+        self.switchScene(SceneOne(self.shaderProg))
 
         gl.glClearColor(*self.backgroundColor, 1.0)
         gl.glClearDepth(1.0)
@@ -411,9 +414,33 @@ class Sketch(CanvasBase):
             self.shaderProg.setBool("imageFlag", self.ImageModeOn)
 
         # TODO 4.2 is at here
-        #if chr(keycode) in "aA":
-
+        if chr(keycode) in "aA":
+            if self.ambientOn:
+                self.shaderProg.setBool("ambientOn", False)
+                self.ambientOn = False
+            else:
+                self.shaderProg.setBool("ambientOn", True)
+                self.ambientOn = True
+            self.update()
+        if chr(keycode) in "dD":
+            if self.diffuseOn:
+                self.shaderProg.setBool("diffuseOn", False)
+                self.diffuseOn = False
+            else:
+                self.shaderProg.setBool("diffuseOn", True)
+                self.diffuseOn = True
+            self.update()
+        if chr(keycode) in "sS":
+            if self.specularOn:
+                self.shaderProg.setBool("specularOn", False)
+                self.specularOn = False
+            else:
+                self.shaderProg.setBool("specularOn", True)
+                self.specularOn = True
+            self.update()
+               
         # TODO 5.3 is at here
+        
 
 
 if __name__ == "__main__":
