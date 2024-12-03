@@ -71,47 +71,44 @@ class DisplayableCylinder(Displayable):
         self.vbo = VBO()  # vbo can only be initiate with glProgram activated
         self.ebo = EBO()
 
-        self.generate(radius, height, nsides, stacks, color)
+        self.generate(radius, height, nsides, color)
 
-    def generate(self, radius=0.5, height=1, nsides=36, stacks=1, color=ColorType.SOFTBLUE):
+    def generate(self, radius=0.5, height=1, nsides=36, color=ColorType.SOFTBLUE):
         self.radius = radius
         self.height = height 
         self.nsides = nsides
         self.color = color
-        self.stacks = stacks
         # we need to pad one more row for both nsides and rings, to assign correct texture coord to them
         # add one for padding
-        self.vertices = np.zeros([stacks*(nsides+1)*2 + 2, 11]) # cylinder sides + bottom + top vertices
-        self.indices = np.zeros([stacks*(nsides+1)*4 + 2, 3]) # triangles for cylinder sides, for bottom, and top
-        for j in range(stacks+1):
-            u = j/stacks
-            for i in range(nsides+1):
-                x = self.radius * math.cos(2 * math.pi * i/nsides)
-                y = self.radius * math.sin(2 * math.pi * i/nsides)
-                z = u * height/2
-                # 2 different vertices for both top and bottom/ +z and -z of the cylinder
-                nx = math.cos(2 * math.pi * i/nsides)
-                ny = math.sin(2 * math.pi * i/nsides)
-                nz = 0
-                m = math.sqrt((nx**2)+(ny**2) + (nz**2))
-                self.vertices[i][0:9]  = [
-                    x,
-                    y,
-                    -z,
-                    nx/m,
-                    ny/m,
-                    0,
-                    *color
-                ]
-                self.vertices[i + nsides + 1][0:9] = [
-                    x,
-                    y,
-                    z,
-                    nx/m,
-                    ny/m,
-                    0,
-                    *color
-                ]
+        self.vertices = np.zeros([(nsides+1)*2 + 2, 11]) # cylinder sides + bottom + top vertices
+        self.indices = np.zeros([(nsides+1)*4 + 2, 3]) # triangles for cylinder sides, for bottom, and top
+        for i in range(nsides+1):
+            x = self.radius * math.cos(2 * math.pi * i/nsides)
+            y = self.radius * math.sin(2 * math.pi * i/nsides)
+            z = 0
+            # 2 different vertices for both top and bottom/ +z and -z of the cylinder
+            nx = math.cos(2 * math.pi * i/nsides)
+            ny = math.sin(2 * math.pi * i/nsides)
+            nz = 0
+            m = math.sqrt((nx**2)+(ny**2) + (nz**2))
+            self.vertices[i][0:9]  = [
+                x,
+                y,
+                -height/2,
+                nx/m,
+                ny/m,
+                0,
+                *color
+            ]
+            self.vertices[i + nsides + 1][0:9] = [
+                x,
+                y,
+                height/2,
+                nx/m,
+                ny/m,
+                0,
+                *color
+            ]
         index = 0
         for i in range(nsides):
             # Side triangles, 2 at a time

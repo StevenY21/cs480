@@ -53,14 +53,14 @@ class SceneThree(Component, Animation):
         backpack.setMaterial(m3)
         backpack.renderingRouting = "vertex lighting"
         self.addChild(backpack)
-        leg1 = Component(Point((0.5, -0.8, 0)), DisplayableCylinder(shaderProg, 0.25, 1.5, 36, 1, ColorType.RED))
+        leg1 = Component(Point((0.5, -0.8, 0)), DisplayableCylinder(shaderProg, 0.25, 1.5, 36, ColorType.RED))
         m3 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
             np.array((0.6, 0.4, 0.8, 1.0)), 64)
         leg1.setMaterial(m3)
         leg1.renderingRouting = "vertex lighting"
         leg1.rotate(-90, leg1.uAxis)
         self.addChild(leg1)
-        leg2 = Component(Point((-0.5, -0.8, 0)), DisplayableCylinder(shaderProg, 0.25, 1.5, 36, 1, ColorType.RED))
+        leg2 = Component(Point((-0.5, -0.8, 0)), DisplayableCylinder(shaderProg, 0.25, 1.5, 36, ColorType.RED))
         m3 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
             np.array((0.6, 0.4, 0.8, 1.0)), 64)
         leg2.setMaterial(m3)
