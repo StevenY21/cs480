@@ -126,7 +126,7 @@ class DisplayableCylinder(Displayable):
                 (i + 1) % nsides + (nsides + 1), # v4
             ]
             index += 2
-        # get indices for bottom cap
+        # get indices for bottom cap / -z
         botCenterIdx = len(self.vertices) - 2 # a center index for connecting triangles to cap it
         self.vertices[botCenterIdx][0:9] = [0, 0, -height/2, 0, 0, -1, *color]
         index += 1
@@ -139,7 +139,7 @@ class DisplayableCylinder(Displayable):
 
             index += 1
 
-        # get indices for top cap
+        # get indices for top cap / +z
         topCenterIdx = len(self.vertices) - 1 
         self.vertices[topCenterIdx][0:9] = [0, 0, height/2, 0, 0, 1, *color]
         for i in range(nsides):

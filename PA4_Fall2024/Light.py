@@ -58,6 +58,8 @@ class Light:
         self.setSpotAngleLimit(spotAngleLimit)
         if pointOn == True:
             self.pointRadialFactor = np.array((1, 0, 0))
+        else:
+            self.pointRadialFactor = np.array((0, 0, 0))
 
     def __repr__(self):
         return f"pos: {self.position}, color:{self.color},\

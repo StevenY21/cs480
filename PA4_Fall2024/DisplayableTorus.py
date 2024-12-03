@@ -122,14 +122,14 @@ class DisplayableTorus(Displayable):
             for j in range(nsides):
                 # 2 triangles per "surface"
                 self.indices[index] = [
-                    i * (nsides + 1) + j, 
-                    (i + 1) * (nsides + 1) + j, 
-                    i * (nsides + 1) + j + 1
+                    i * (nsides + 1) + j, # v1 
+                    i * (nsides + 1) + j + 1, # v2
+                    (i + 1) * (nsides + 1) + j, # v3
                 ]
                 self.indices[index+1] = [
-                    (i + 1) * (nsides + 1) + j, 
-                    (i + 1) * (nsides + 1) + j + 1, 
-                    i * (nsides + 1) + j + 1
+                    i * (nsides + 1) + j + 1, # v2
+                    (i + 1) * (nsides + 1) + j, # v3
+                    (i + 1) * (nsides + 1) + j + 1 # v4
                 ]
                 index+=2
 
