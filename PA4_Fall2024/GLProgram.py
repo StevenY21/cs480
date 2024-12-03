@@ -110,6 +110,8 @@ class GLProgram:
             self.attribs[f"light[{i}].spotOn"] = f"{self.attribs['light']}[{i}].spotOn"
             self.attribs[f"light[{i}].spotDirection"] = f"{self.attribs['light']}[{i}].spotDirection"
             self.attribs[f"light[{i}].spotAngleLimit"] = f"{self.attribs['light']}[{i}].spotAngleLimit"
+            self.attribs[f"light[{i}].radialOn"] = f"{self.attribs['light']}[{i}].pointOn"
+            self.attribs[f"light[{i}].radialFactor"] = f"{self.attribs['light']}[{i}].pointRadialFactor"
 
         self.vertexShaderSource = self.genVertexShaderSource()
         self.fragmentShaderSource = self.genFragShaderSource()
@@ -193,6 +195,9 @@ class GLProgram:
             vec3 spotDirection;
             vec3 spotRadialFactor;
             float spotAngleLimit;
+            
+            bool pointOn;
+            vec3 pointRadialFactor;
         }};
         
         in vec3 vPos;
@@ -305,6 +310,17 @@ class GLProgram:
                             specular = {self.attribs["material"]}.specular * {self.attribs["light"]}[i].color * pow(vR, {self.attribs["material"]}.highlight);
                         }}
                     }}
+                    if ({self.attribs["light"]}[i].pointOn) {{
+                        // as of right now it is essentially 1/d^2, as only x is 1 and y and z are 0
+                        float distance = length({self.attribs["light"]}[i].position - vPos);
+                        float radAttenuationX = {self.attribs["light"]}[i].pointRadialFactor.x * (pow(distance, 2));
+                        float radAttenuationY = {self.attribs["light"]}[i].pointRadialFactor.y * distance;
+                        float radAttenuationZ = {self.attribs["light"]}[i].pointRadialFactor.z;              
+                        float radialAttenuation = 1.0 / (radAttenuationX + radAttenuationY + radAttenuationZ);
+                        result += (radialAttenuation) * (diffuse + specular);
+                    }} else {{
+                        result += diffuse + specular;
+                    }}
                     // multiply sum of diffuse and specular by (spotRadial + spotAngular) if spotOn on, else don't
                     if ({self.attribs["light"]}[i].spotOn) {{
                         float distance = length({self.attribs["light"]}[i].position - vPos);
@@ -321,7 +337,7 @@ class GLProgram:
                         if (dot(vObj, vl) > cos({self.attribs["light"]}[i].spotAngleLimit)) {{
                             angularAttenuation = pow(dot(vObj, vl), {self.attribs["material"]}.highlight);
                         }}
-                        result += (radialAttenuation * angularAttenuation) * (diffuse + specular); // filler for now as I figure out the equation
+                        result += (radialAttenuation * angularAttenuation) * (diffuse + specular); 
                     }} else {{
                         result += diffuse + specular;
                     }}

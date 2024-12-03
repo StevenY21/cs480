@@ -35,36 +35,36 @@ class SceneThree(Component, Animation):
                                  self.glutility.rotate(120, [0, 0, 1], False)]
         self.lRadius = 3
         self.lAngles = [0, 0, 0]
-        body = Component(Point((0, 0.75, 0)), DisplayableEllipsoid(shaderProg, 1.0, 1.5, 0.9, 36, 36, ColorType.RED))
+        body = Component(Point((0, 0.75, 0)), DisplayableEllipsoid(shaderProg, 1.0, 1.5, 0.9, 48, 48, ColorType.RED))
         m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.4, 0.8, 0.6, 0.1)), 64)
         body.setMaterial(m1)
-        body.renderingRouting = "normal"
+        body.renderingRouting = "vertex lighting"
         self.addChild(body)
         eye = Component(Point((0, 1, 0.25)), DisplayableEllipsoid(shaderProg, 0.9, 0.5, 0.9, 36, 36))
         m3 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.6, 0.4, 0.8, 1.0)), 64)
         eye.setMaterial(m3)
-        eye.renderingRouting = "normal"
+        eye.renderingRouting = "vertex lighting"
         self.addChild(eye)
         backpack = Component(Point((0, 0.8, -0.75)), DisplayableCube(shaderProg, 1.0, 1.5, 1.0, ColorType.RED))
         m3 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                 np.array((0.6, 0.4, 0.8, 1.0)), 64)
         backpack.setMaterial(m3)
-        backpack.renderingRouting = "normal"
+        backpack.renderingRouting = "vertex lighting"
         self.addChild(backpack)
         leg1 = Component(Point((0.5, -0.8, 0)), DisplayableCylinder(shaderProg, 0.25, 1.5, 36, 1, ColorType.RED))
         m3 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
             np.array((0.6, 0.4, 0.8, 1.0)), 64)
         leg1.setMaterial(m3)
-        leg1.renderingRouting = "normal"
+        leg1.renderingRouting = "vertex lighting"
         leg1.rotate(-90, leg1.uAxis)
         self.addChild(leg1)
         leg2 = Component(Point((-0.5, -0.8, 0)), DisplayableCylinder(shaderProg, 0.25, 1.5, 36, 1, ColorType.RED))
         m3 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
             np.array((0.6, 0.4, 0.8, 1.0)), 64)
         leg2.setMaterial(m3)
-        leg2.renderingRouting = "normal"
+        leg2.renderingRouting = "vertex lighting"
         leg2.rotate(-90, leg2.uAxis)
         self.addChild(leg2)
         l0 = Light(self.lightPos(self.lRadius, self.lAngles[0], self.lTransformations[0]),

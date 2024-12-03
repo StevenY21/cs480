@@ -78,9 +78,9 @@ class DisplayableEllipsoid(Displayable):
         # add 2 to both stacks and slices
         self.vertices = np.zeros([(stacks+2) * (slices+2), 11])
         # u is for the horizontal angle, v for the vertical
-        for i in range(0, stacks+2):
+        for i in range(0, stacks+1):
             u = i/stacks
-            for j in range(0, slices+2):
+            for j in range(0, slices+1):
                 v = j/slices
                 # [x, y, z, normal, color, texture coords]
                 # x, y, z calculated using parametric equations for a torus
