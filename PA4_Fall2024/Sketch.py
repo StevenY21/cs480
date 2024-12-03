@@ -452,7 +452,9 @@ class Sketch(CanvasBase):
             self.update()
                
         # TODO 5.3 is at here
-        
+        # disable infinite light
+        # if chr(keycode) == "1":
+
         
 
 

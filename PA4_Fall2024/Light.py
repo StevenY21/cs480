@@ -23,11 +23,8 @@ class Light:
     spotRadialFactor = None
     spotAngleLimit = None
 
-    # for now, default to having point light existing
-    pointOn = True
-    pointRadialFactor = None
 
-    def __init__(self, position=None, color=None, infiniteDirection=None, spotDirection=None, spotRadialFactor=None, spotAngleLimit=0, pointOn = True):
+    def __init__(self, position=None, color=None, infiniteDirection=None, spotDirection=None, spotRadialFactor=None, spotAngleLimit=0):
         # set basic light
         if position is not None:
             self.setPosition(position)
@@ -56,10 +53,6 @@ class Light:
             self.spotDirection = np.array((0, 0, 0))
             self.spotRadialFactor = np.array((0, 0, 0))
         self.setSpotAngleLimit(spotAngleLimit)
-        if pointOn == True:
-            self.pointRadialFactor = np.array((1, 0, 0))
-        else:
-            self.pointRadialFactor = np.array((0, 0, 0))
 
     def __repr__(self):
         return f"pos: {self.position}, color:{self.color},\

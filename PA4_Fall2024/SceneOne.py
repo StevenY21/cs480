@@ -53,6 +53,12 @@ class SceneOne(Component, Animation):
         sphere.setMaterial(m3)
         sphere.renderingRouting = "lighting"
         self.addChild(sphere)
+        cylinder = Component(Point((0, -2, 0)), DisplayableCylinder(shaderProg, 0.4, 0.4, 36, 36))
+        m3 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
+                      np.array((0.6, 0.4, 0.8, 1.0)), 64)
+        cylinder.setMaterial(m3)
+        cylinder.renderingRouting = "normal"
+        self.addChild(cylinder)
         l0 = Light(self.lightPos(self.lRadius, self.lAngles[0], self.lTransformations[0]),
                    np.array((*ColorType.SOFTRED, 1.0)))
         lightCube0 = Component(Point((0, 0, 0)), DisplayableCube(shaderProg, 0.1, 0.1, 0.1, ColorType.SOFTRED))
