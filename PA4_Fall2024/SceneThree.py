@@ -42,9 +42,9 @@ class SceneThree(Component, Animation):
         body.renderingRouting = "vertex lighting"
         self.addChild(body)
         eye = Component(Point((0, 1, 0.25)), DisplayableEllipsoid(shaderProg, 0.9, 0.5, 0.9, 36, 36))
-        m3 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
+        m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 1, 1)),
                       np.array((0.6, 0.4, 0.8, 1.0)), 64)
-        eye.setMaterial(m3)
+        eye.setMaterial(m2)
         eye.renderingRouting = "vertex lighting"
         self.addChild(eye)
         backpack = Component(Point((0, 0.8, -0.75)), DisplayableCube(shaderProg, 1.0, 1.5, 1.0, ColorType.RED))
@@ -54,16 +54,16 @@ class SceneThree(Component, Animation):
         backpack.renderingRouting = "vertex lighting"
         self.addChild(backpack)
         leg1 = Component(Point((0.5, -0.8, 0)), DisplayableCylinder(shaderProg, 0.25, 1.5, 36, ColorType.RED))
-        m3 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
+        m4 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
             np.array((0.6, 0.4, 0.8, 1.0)), 64)
-        leg1.setMaterial(m3)
+        leg1.setMaterial(m4)
         leg1.renderingRouting = "vertex lighting"
         leg1.rotate(-90, leg1.uAxis)
         self.addChild(leg1)
         leg2 = Component(Point((-0.5, -0.8, 0)), DisplayableCylinder(shaderProg, 0.25, 1.5, 36, ColorType.RED))
-        m3 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
+        m5 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
             np.array((0.6, 0.4, 0.8, 1.0)), 64)
-        leg2.setMaterial(m3)
+        leg2.setMaterial(m5)
         leg2.renderingRouting = "vertex lighting"
         leg2.rotate(-90, leg2.uAxis)
         self.addChild(leg2)

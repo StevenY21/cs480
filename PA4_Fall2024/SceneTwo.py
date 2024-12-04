@@ -58,7 +58,7 @@ class SceneTwo(Component, Animation):
         self.addChild(cube)
         
         """
-        cylinder = Component(Point((0, 0.5, 0)), DisplayableCylinder(shaderProg, 0.3, 1, 36, 1))
+        cylinder = Component(Point((0, 0.5, 0)), DisplayableCylinder(shaderProg, 0.3, 1, 36))
         m1 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
                       np.array((0.8, 0.6, 0.4, 1.0)), 64)
         cylinder.setMaterial(m1)
@@ -67,7 +67,7 @@ class SceneTwo(Component, Animation):
         self.addChild(cylinder)
 
         torus = Component(Point((0, 1, 0)), DisplayableTorus(shaderProg, 0.15, 0.3, 36, 36))
-        m2 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
+        m2 = Material(np.array((0.1, 0.1, 0.1, 1)), np.array((0.1, 0.1, 0.1, 1)),
                       np.array((0.8, 0.6, 0.4, 1.0)), 64)
         torus.setMaterial(m2)
         torus.renderingRouting = "lighting"
@@ -75,14 +75,14 @@ class SceneTwo(Component, Animation):
         self.addChild(torus)
 
         sphere = Component(Point((0, 1.3, 0)), DisplayableEllipsoid(shaderProg, 0.4, 0.4, 0.4, 36, 36))
-        m3 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
-                      np.array((0.6, 0.4, 0.8, 1.0)), 64)
+        m3 = Material(np.array((0.1, 0.1, 0.1, 1)), np.array((0.8, 0.6, 0.4, 1.0)),
+                      np.array((0.1, 0.1, 0.1, 0.1)), 64)
         sphere.setMaterial(m3)
         sphere.renderingRouting = "lighting"
         self.addChild(sphere)
         torus2 = Component(Point((0, 0, 0)), DisplayableTorus(shaderProg, 0.15, 0.4, 36, 36))
-        m4 = Material(np.array((0.1, 0.1, 0.1, 0.1)), np.array((0.2, 0.2, 0.2, 1)),
-                      np.array((0.8, 0.6, 0.4, 1.0)), 64)
+        m4 = Material(np.array((0.8, 0.6, 0.4, 1.0)), np.array((0.1, 0.1, 0.1, 0.1)),
+                      np.array((0.1, 0.1, 0.1, 0.1)), 64)
         torus2.setMaterial(m4)
         torus2.renderingRouting = "lighting"
         torus2.rotate(90, torus2.uAxis)

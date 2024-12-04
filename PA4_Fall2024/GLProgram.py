@@ -299,10 +299,9 @@ class GLProgram:
                     }}
                     // specular = specular material * light source color * VR^highlight if NL and VR > 0 else 0
                     // R = 2(dot(L, N))N - L: (2 * (dot(lightDirection, norm)) * norm * lightDirection)
-                    // apparently reflecting just works will double check more later
                     vec4 specular = vec4(0.0);
                     
-                    vec3 R = normalize(reflect(-lightDirection, norm));
+                    vec3 R = normalize((2 * (dot(lightDirection, norm)) * norm - lightDirection));
                     float vR = dot(viewDirection, R);
                     if ({self.attribs["specularOn"]}) {{
                         if ((vR > 0.0)) {{
