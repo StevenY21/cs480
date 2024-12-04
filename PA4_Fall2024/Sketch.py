@@ -431,6 +431,7 @@ class Sketch(CanvasBase):
             self.shaderProg.setBool("imageFlag", self.ImageModeOn)
 
         # TODO 4.2 is at here
+        # directly sets shader program boolean attributes that would turn off specifc light types
         if chr(keycode) in "aA":
             if self.ambientOn:
                 self.shaderProg.setBool("ambientOn", False)
@@ -457,8 +458,7 @@ class Sketch(CanvasBase):
             self.update()
                
         # TODO 5.3 is at here
-        # basically reinitializing all lights everytime with whatever is toggled
-
+        # added light toggle attributes to disable lights while not restarting animations
         if chr(keycode) == "1": 
             if self.lightsOn[0]:
                 self.lightsOn[0] = False

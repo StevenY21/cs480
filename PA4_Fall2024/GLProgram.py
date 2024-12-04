@@ -356,9 +356,9 @@ class GLProgram:
                 //   (i.e. the rgb values come from the xyz components of the normal). The value for each dimension in 
                 //   vertex normal will be in the range -1 to 1. You will need to offset and rescale them to the 
                 //   range 0 to 1.
-                
-                vec3 normalColor = normalize(vNormal * 0.5 + 0.5); // sets vNormals between -1 and 0  to between 0 and 0.5, and 0 and 1 to be 0.5 and 1
-                results[ri] = vec4(normalColor, 1.0);
+                // sets vNormals between -1 and 0  to between 0 and 0.5, and 0 and 1 to be 0.5 and 1
+                vec3 normalRender = normalize(vNormal * 0.5 + 0.5);
+                results[ri] = vec4(normalRender, 1.0);
                 ri+=1;
             }}
             
@@ -500,6 +500,7 @@ class GLProgram:
     def setLight(self, lightIndex: int, light: Light):
         if not isinstance(light, Light):
             raise TypeError("light type must be Light")
+        # sometimes the lightIndex goes over the number of lights that exist
         if self.lightsOn[lightIndex % len(self.lightsOn)]:
             self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].position""", light.position, False)
             self.setVec4(f"""{self.attribs["light"]}[{lightIndex}].color""", light.color, False)
@@ -511,7 +512,7 @@ class GLProgram:
             self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].spotDirection""", light.spotDirection, False)
             self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].spotRadialFactor""", light.spotRadialFactor, False)
             self.setFloat(f"""{self.attribs["light"]}[{lightIndex}].spotAngleLimit""", light.spotAngleLimit, False)
-        else:
+        else: # for clearing out the light when toggled off
             clearLight = Light()
             self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].position""", clearLight.position, False)
             self.setVec4(f"""{self.attribs["light"]}[{lightIndex}].color""", clearLight.color, False)

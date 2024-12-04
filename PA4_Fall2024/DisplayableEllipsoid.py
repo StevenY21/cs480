@@ -107,6 +107,7 @@ class DisplayableEllipsoid(Displayable):
                     # textures maybe add later
                 ]
         index = 0
+        # each stack has slice amount of vertices, and a pair of triangles for each sliced bit of the stack
         self.indices = np.zeros([stacks * slices * 2, 3])
         for i in range(stacks):
             for j in range(slices):
@@ -116,6 +117,7 @@ class DisplayableEllipsoid(Displayable):
                     i * (slices+2) + j + 1, #v2
                     (i + 1) * (slices+2) + j, #v3
                 ]
+                # mutliplying the slices to ensure it connects to next stack
                 self.indices[index+1] = [
                     i * (slices+2) + j + 1, #v2
                     (i + 1) * (slices+2) + j, #v3
