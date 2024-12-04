@@ -80,7 +80,8 @@ class DisplayableCylinder(Displayable):
         self.color = color
         # we need to pad one more row for both nsides and rings, to assign correct texture coord to them
         # add one for padding
-        self.vertices = np.zeros([(nsides+1)*2 + 2, 11]) # cylinder sides + bottom + top vertices
+        # hard coding the stacks 
+        self.vertices = np.zeros([(nsides+1)*4 + 2, 11]) # 4 stacks of cylinder sides + bottom + top vertices
         self.indices = np.zeros([(nsides+1)*4 + 2, 3]) # triangles for cylinder sides, for bottom, and top
         for i in range(nsides+1):
             x = self.radius * math.cos(2 * math.pi * i/nsides)
@@ -91,6 +92,7 @@ class DisplayableCylinder(Displayable):
             ny = math.sin(2 * math.pi * i/nsides)
             nz = 0
             m = math.sqrt((nx**2)+(ny**2) + (nz**2))
+            # side cap stacks
             self.vertices[i][0:9]  = [
                 x,
                 y,
@@ -100,7 +102,7 @@ class DisplayableCylinder(Displayable):
                 0,
                 *color
             ]
-            self.vertices[i + nsides + 1][0:9] = [
+            self.vertices[i + (nsides + 1)][0:9] = [
                 x,
                 y,
                 height/2,
@@ -109,44 +111,65 @@ class DisplayableCylinder(Displayable):
                 0,
                 *color
             ]
+            # bottom and top cap stacks
+            self.vertices[i + ((nsides + 1)*2)][0:9] = [
+                x,
+                y,
+                -height/2,
+                0,
+                0,
+                -1,
+                *color
+            ]
+            self.vertices[i + ((nsides + 1)*3)][0:9] = [
+                x,
+                y,
+                height/2,
+                0,
+                0,
+                1,
+                *color
+            ]
+        
         index = 0
-        for i in range(nsides):
+        for i in range(nsides+1):
             # Side triangles, 2 at a time
             self.indices[index] = [
                 i, #v1
-                (i + 1) % nsides, # v2
-                i + (nsides + 1) # v3
+                i + 1, # v2
+                i + nsides + 1 # v3
             ]
             self.indices[index + 1] = [
-                (i + 1) % nsides, # v2
-                i + (nsides + 1), #v3
-                (i + 1) % nsides + (nsides + 1), # v4
+                i + 1, 
+                i + nsides + 2,
+                i + nsides + 1,
             ]
             index += 2
         # get indices for bottom cap / -z
         botCenterIdx = len(self.vertices) - 2 # a center index for connecting triangles to cap it
         self.vertices[botCenterIdx][0:9] = [0, 0, -height/2, 0, 0, -1, *color]
         index += 1
-        for i in range(nsides):
+        
+        for i in range(nsides+1):
             self.indices[index] = [
                 botCenterIdx,
-                i,
-                (i + 1) % nsides
+                i + 2 * (nsides + 1),
+                (i + 1) % (nsides + 1) + 2 * (nsides + 1)
             ]
 
             index += 1
 
         # get indices for top cap / +z
         topCenterIdx = len(self.vertices) - 1 
+        index += 1
         self.vertices[topCenterIdx][0:9] = [0, 0, height/2, 0, 0, 1, *color]
-        for i in range(nsides):
+        for i in range(nsides+1):
             self.indices[index] =[
                 topCenterIdx,
-                (i + 1) % nsides + nsides + 1,
-                i + nsides + 1
+                i + (3 * (nsides + 1)),
+                ((i + 1) % (nsides + 1)) + (3 * (nsides + 1))
             ]
             index += 1
-
 
     def draw(self):
         self.vao.bind()

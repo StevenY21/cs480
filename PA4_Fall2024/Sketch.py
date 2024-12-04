@@ -132,11 +132,16 @@ class Sketch(CanvasBase):
 
     sceneIdx = 0
     sceneLst = [SceneOne, SceneTwo, SceneThree]
+
+    # 3 lights for all scenes
+    lightsOn = None
+
     def __init__(self, parent):
         """
         Init everything. You should set your model here.
         """
         super(Sketch, self).__init__(parent)
+        self.lightsOn = [True, True, True] # initializing lights toggle
         # prepare OpenGL context
         contextAttrib = glcanvas.GLContextAttrs()
         contextAttrib.PlatformDefaults().CoreProfile().MajorVersion(3).MinorVersion(3).EndList()
@@ -452,10 +457,32 @@ class Sketch(CanvasBase):
             self.update()
                
         # TODO 5.3 is at here
-        # disable infinite light
-        # if chr(keycode) == "1":
+        # basically reinitializing all lights everytime with whatever is toggled
 
-        
+        if chr(keycode) == "1": 
+            if self.lightsOn[0]:
+                self.lightsOn[0] = False
+                self.shaderProg.lightsOn[0] = False
+            else:
+                self.lightsOn[0] = True
+                self.shaderProg.lightsOn[0] = True
+            self.update()
+        if chr(keycode) == "2": 
+            if self.lightsOn[1]:
+                self.lightsOn[1] = False
+                self.shaderProg.lightsOn[1] = False
+            else:
+                self.lightsOn[1] = True
+                self.shaderProg.lightsOn[1] = True
+            self.update()
+        if chr(keycode) == "3": 
+            if self.lightsOn[2]:
+                self.lightsOn[2] = False
+                self.shaderProg.lightsOn[2] = False
+            else:
+                self.lightsOn[2] = True
+                self.shaderProg.lightsOn[2] = True
+            self.update()
 
 
 if __name__ == "__main__":

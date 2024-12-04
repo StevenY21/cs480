@@ -31,7 +31,6 @@ class SceneTwo(Component, Animation):
     lRadius = None
     lAngles = None
     lTransformations = None
-
     def __init__(self, shaderProg):
         super().__init__(Point((0, 0, 0)))
         self.shaderProg = shaderProg
@@ -106,7 +105,6 @@ class SceneTwo(Component, Animation):
         self.addChild(lightCube2)
         self.lights = [l0, l1, l2]
         self.lightCubes = [lightCube0, lightCube1, lightCube2]
-
     def lightPos(self, radius, thetaAng, transformationMatrix):
         r = np.zeros(4)
         r[0] = radius * math.cos(thetaAng / 180 * math.pi)

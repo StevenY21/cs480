@@ -63,9 +63,10 @@ class GLProgram:
     ambientOn = True
     specularOn = True
     diffuseOn = True
+    lightsOn = None
     def __init__(self) -> None:
         self.program = gl.glCreateProgram()
-
+        self.lightsOn = [True, True, True]
         self.ready = False
         # define attribs name and corresponding method to set it
         self.attribs = {
@@ -94,7 +95,9 @@ class GLProgram:
 
             "ambientOn": "ambientOn",
             "diffuseOn": "diffuseOn",
-            "specularOn": "specularOn"
+            "specularOn": "specularOn",
+            "lightsOn": "lightsOn"
+
         }
         self.attribs["diffuse"] = self.attribs["material"] + ".diffuse"
         self.attribs["specular"] = self.attribs["material"] + ".specular"
@@ -497,17 +500,29 @@ class GLProgram:
     def setLight(self, lightIndex: int, light: Light):
         if not isinstance(light, Light):
             raise TypeError("light type must be Light")
+        if self.lightsOn[lightIndex % len(self.lightsOn)]:
+            self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].position""", light.position, False)
+            self.setVec4(f"""{self.attribs["light"]}[{lightIndex}].color""", light.color, False)
 
-        self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].position""", light.position, False)
-        self.setVec4(f"""{self.attribs["light"]}[{lightIndex}].color""", light.color, False)
+            self.setBool(f"""{self.attribs["light"]}[{lightIndex}].infiniteOn""", light.infiniteOn, False)
+            self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].infiniteDirection""", light.infiniteDirection, False)
 
-        self.setBool(f"""{self.attribs["light"]}[{lightIndex}].infiniteOn""", light.infiniteOn, False)
-        self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].infiniteDirection""", light.infiniteDirection, False)
+            self.setBool(f"""{self.attribs["light"]}[{lightIndex}].spotOn""", light.spotOn, False)
+            self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].spotDirection""", light.spotDirection, False)
+            self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].spotRadialFactor""", light.spotRadialFactor, False)
+            self.setFloat(f"""{self.attribs["light"]}[{lightIndex}].spotAngleLimit""", light.spotAngleLimit, False)
+        else:
+            clearLight = Light()
+            self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].position""", clearLight.position, False)
+            self.setVec4(f"""{self.attribs["light"]}[{lightIndex}].color""", clearLight.color, False)
 
-        self.setBool(f"""{self.attribs["light"]}[{lightIndex}].spotOn""", light.spotOn, False)
-        self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].spotDirection""", light.spotDirection, False)
-        self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].spotRadialFactor""", light.spotRadialFactor, False)
-        self.setFloat(f"""{self.attribs["light"]}[{lightIndex}].spotAngleLimit""", light.spotAngleLimit, False)
+            self.setBool(f"""{self.attribs["light"]}[{lightIndex}].infiniteOn""", clearLight.infiniteOn, False)
+            self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].infiniteDirection""", clearLight.infiniteDirection, False)
+
+            self.setBool(f"""{self.attribs["light"]}[{lightIndex}].spotOn""", clearLight.spotOn, False)
+            self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].spotDirection""", clearLight.spotDirection, False)
+            self.setVec3(f"""{self.attribs["light"]}[{lightIndex}].spotRadialFactor""", clearLight.spotRadialFactor, False)
+            self.setFloat(f"""{self.attribs["light"]}[{lightIndex}].spotAngleLimit""", clearLight.spotAngleLimit, False)
 
     def clearAllLights(self):
         maxLightsNum = int(self.attribs["maxLightsNum"])

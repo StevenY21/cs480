@@ -83,7 +83,7 @@ class DisplayableEllipsoid(Displayable):
             for j in range(0, slices+1):
                 v = j/slices
                 # [x, y, z, normal, color, texture coords]
-                # x, y, z calculated using parametric equations for a torus
+                # x, y, z calculated using parametric equations
                 # x(u,v)=radX*cosv*cosu
                 # y(u,v)=radY*cosv*sinu
                 # z(u,v)=radZ*sinv
