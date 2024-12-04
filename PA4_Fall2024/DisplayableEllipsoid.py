@@ -87,7 +87,7 @@ class DisplayableEllipsoid(Displayable):
                 # x(u,v)=radX*cosv*cosu
                 # y(u,v)=radY*cosv*sinu
                 # z(u,v)=radZ*sinv
-                x = (self.radiusX*math.cos(v*2*math.pi)*math.cos(u*2*math.pi))
+                x = self.radiusX*math.cos(v*2*math.pi)*math.cos(u*2*math.pi)
                 y = self.radiusY*math.cos(v*2*math.pi)*math.sin(u*2*math.pi)
                 z = self.radiusZ*math.sin(v*2*math.pi)
                 # surface normals

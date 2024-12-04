@@ -47,6 +47,7 @@ except ImportError:
 #   “./assets/earth.jpg” for the sphere as the texture image.
 #   There should be no seams in the resulting texture-mapped model.
 
+# NOTE: FOR SOME REASON THE FILE NAME MIGHT BE LOWERCASE WHEN YOU DOWNLOAD IT, please make sure it says DisplayableCylinder
 class DisplayableCylinder(Displayable):
     vao = None
     vbo = None
@@ -101,7 +102,7 @@ class DisplayableCylinder(Displayable):
             nz = 0
             m = math.sqrt((nx**2)+(ny**2) + (nz**2))
             # "side" stacks, as in won't be part of the caps
-            # this side for closer to botton / -z
+            # this stack for closer to botton / -z
             self.vertices[i][0:9]  = [
                 x,
                 y,
@@ -111,7 +112,7 @@ class DisplayableCylinder(Displayable):
                 0,
                 *color
             ]
-            # this side for closer to top / +z
+            # this stack for closer to top / +z
             # incrememnting by nsides to form the other stacks
             self.vertices[i + (nsides + 1)][0:9] = [
                 x,
@@ -122,7 +123,7 @@ class DisplayableCylinder(Displayable):
                 0,
                 *color
             ]
-            # bottom cap stac, surface normals face "downward"
+            # bottom cap stack, surface normals face "downward"
             self.vertices[i + ((nsides + 1)*2)][0:9] = [
                 x,
                 y,
@@ -153,8 +154,8 @@ class DisplayableCylinder(Displayable):
             ]
             self.indices[index + 1] = [
                 i + 1, # v2
+                i + nsides + 1, # v3
                 i + nsides + 2, # v4
-                i + nsides + 1, # v2
             ]
             index += 2
         # get indices for bottom cap / -z

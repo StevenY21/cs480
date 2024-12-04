@@ -11,3 +11,5 @@ The indices are stored in nest arrays, with each row being 3 numbers that form a
 usually have indices of vertices in another "layer" to ensure it all connects to each other. 
 The lighting followed the general illumination model provided in class. Keybinds can enable and disable specific light types and sources, as they modify
 attributes in the shader program, which would then modify the results produced.
+
+NOTE: For some reason, DisplayableCylinder.py might be lowercased when you get download and access it, make sure it says DisplayableCylinder before running code.
